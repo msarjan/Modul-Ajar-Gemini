@@ -77,12 +77,12 @@
   .ms-arrow{font-size:11px;color:var(--muted);transition:transform .15s;will-change:transform}
   .ms-trigger.open .ms-arrow{transform:rotate(180deg)}
   .ms-count{background:var(--green);color:#fff;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;min-width:20px;text-align:center}
-  .ms-panel{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:280px;overflow-y:auto;overflow-x:hidden;display:none;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+  .ms-panel{position:absolute;top:calc(100% + 4px);left:0;right:0;min-width:220px;background:#fff;border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:280px;overflow-y:auto;overflow-x:hidden;display:none;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.08)}
   .ms-panel.open{display:block}
   .ms-option{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;font-size:14px;color:var(--text);transition:background .1s;user-select:none;line-height:1.5;width:100%;box-sizing:border-box}
   .ms-option:hover{background:var(--green-light)}
   .ms-option input[type=checkbox]{cursor:pointer;accent-color:var(--green);margin:0;flex-shrink:0;width:17px;height:17px}
-  .ms-option > span:not(.ms-remove-custom){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:normal;word-break:break-word}
+  .ms-option > span:not(.ms-remove-custom){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;word-break:normal}
   .ms-option.selected{background:#F0FAF6;font-weight:500}
   .ms-custom-wrap{padding:8px 12px;border-top:1px solid var(--border);display:flex;gap:6px;background:#F9FAFB}
   .ms-custom-wrap input{flex:1;padding:6px 9px;border:1px solid var(--border2);border-radius:4px;font-size:12px;font-family:inherit;outline:none;color:var(--text)}
@@ -789,11 +789,11 @@
           <span class="ms-arrow">▼</span>
         </button>
         <div class="ms-panel" id="ms-kbc">
-          <label class="ms-option"><input type="checkbox" value="Cinta Allah dan Rasul-Nya" data-label="❤️ Cinta Allah & Rasul-Nya" onchange="updateMSDisplay(this)"> <span>❤️ Cinta Allah &amp; Rasul-Nya</span></label>
-          <label class="ms-option"><input type="checkbox" value="Cinta Ilmu" data-label="📚 Cinta Ilmu" onchange="updateMSDisplay(this)"> <span>📚 Cinta Ilmu</span></label>
-          <label class="ms-option"><input type="checkbox" value="Cinta Lingkungan" data-label="🌿 Cinta Lingkungan" onchange="updateMSDisplay(this)"> <span>🌿 Cinta Lingkungan</span></label>
-          <label class="ms-option"><input type="checkbox" value="Cinta Diri dan Sesama Manusia" data-label="🤲 Cinta Diri & Sesama Manusia" onchange="updateMSDisplay(this)"> <span>🤲 Cinta Diri &amp; Sesama Manusia</span></label>
-          <label class="ms-option"><input type="checkbox" value="Cinta Tanah Air" data-label="🇮🇩 Cinta Tanah Air" onchange="updateMSDisplay(this)"> <span>🇮🇩 Cinta Tanah Air</span></label>
+          <label class="ms-option"><input type="checkbox" value="Cinta Allah dan Rasul-Nya" data-label="❤️ Cinta Allah & Rasul-Nya" onchange="updateMSDisplay(this);syncKBCChipFromCheckbox(this)"> <span>❤️ Cinta Allah &amp; Rasul-Nya</span></label>
+          <label class="ms-option"><input type="checkbox" value="Cinta Ilmu" data-label="📚 Cinta Ilmu" onchange="updateMSDisplay(this);syncKBCChipFromCheckbox(this)"> <span>📚 Cinta Ilmu</span></label>
+          <label class="ms-option"><input type="checkbox" value="Cinta Lingkungan" data-label="🌿 Cinta Lingkungan" onchange="updateMSDisplay(this);syncKBCChipFromCheckbox(this)"> <span>🌿 Cinta Lingkungan</span></label>
+          <label class="ms-option"><input type="checkbox" value="Cinta Diri dan Sesama Manusia" data-label="🤲 Cinta Diri & Sesama Manusia" onchange="updateMSDisplay(this);syncKBCChipFromCheckbox(this)"> <span>🤲 Cinta Diri &amp; Sesama Manusia</span></label>
+          <label class="ms-option"><input type="checkbox" value="Cinta Tanah Air" data-label="🇮🇩 Cinta Tanah Air" onchange="updateMSDisplay(this);syncKBCChipFromCheckbox(this)"> <span>🇮🇩 Cinta Tanah Air</span></label>
         </div>
       </div>
     </div>
@@ -845,10 +845,10 @@
           <span class="ms-arrow">▼</span>
         </button>
         <div class="ms-panel" id="ms-asesmen">
-          <label class="ms-option"><input type="checkbox" value="Asesmen Diagnostik" data-label="Asesmen Diagnostik" onchange="updateMSDisplay(this)"> <span>Asesmen Diagnostik</span></label>
-          <label class="ms-option"><input type="checkbox" value="Asesmen Formatif" data-label="Asesmen Formatif" onchange="updateMSDisplay(this)"> <span>Asesmen Formatif</span></label>
-          <label class="ms-option"><input type="checkbox" value="Asesmen Sumatif" data-label="Asesmen Sumatif" onchange="updateMSDisplay(this)"> <span>Asesmen Sumatif</span></label>
-          <label class="ms-option"><input type="checkbox" value="Asesmen Sikap (Jurnal Anekdotal)" data-label="Asesmen Sikap (Jurnal Anekdotal)" onchange="updateMSDisplay(this)"> <span>Asesmen Sikap (Jurnal Anekdotal)</span></label>
+          <label class="ms-option"><input type="checkbox" value="Asesmen Diagnostik" data-label="Asesmen Diagnostik" onchange="updateMSDisplay(this);if(currentStep===5)updatePreview()"> <span>Asesmen Diagnostik</span></label>
+          <label class="ms-option"><input type="checkbox" value="Asesmen Formatif" data-label="Asesmen Formatif" onchange="updateMSDisplay(this);if(currentStep===5)updatePreview()"> <span>Asesmen Formatif</span></label>
+          <label class="ms-option"><input type="checkbox" value="Asesmen Sumatif" data-label="Asesmen Sumatif" onchange="updateMSDisplay(this);if(currentStep===5)updatePreview()"> <span>Asesmen Sumatif</span></label>
+          <label class="ms-option"><input type="checkbox" value="Asesmen Sikap (Jurnal Anekdotal)" data-label="Asesmen Sikap (Jurnal Anekdotal)" onchange="updateMSDisplay(this);if(currentStep===5)updatePreview()"> <span>Asesmen Sikap (Jurnal Anekdotal)</span></label>
         </div>
       </div>
     </div>
@@ -1142,11 +1142,6 @@ function saveFormState(){
       jpData:JSON.parse(JSON.stringify(jpData))
     };
     localStorage.setItem(SAVE_KEY,JSON.stringify(state));
-    // Update title tab browser
-    const topikVal = document.getElementById('topik')?.value?.trim();
-    document.title = topikVal
-      ? `${topikVal} — Generator Modul Ajar`
-      : 'Generator Modul Ajar Madrasah';
     // Update step completion
     checkStepCompletion();
     // Visual indicator
@@ -2007,6 +2002,22 @@ function setKBCCheckbox(namaTopik, centang){
   }
 }
 
+// Sinkronisasi chip KBC dari checkbox — arah checkbox → chip
+function syncKBCChipFromCheckbox(checkbox){
+  const namaTopik = checkbox.value;
+  const aktif = checkbox.checked;
+  const chips = document.querySelectorAll('#kbc-chips button[data-topik]');
+  for(const chip of chips){
+    if(chip.dataset.topik === namaTopik){
+      chip.style.border    = `1.5px solid ${aktif?'#16A34A':'#D1D5DB'}`;
+      chip.style.background = aktif?'#DCFCE7':'#F9FAFB';
+      chip.style.color     = aktif?'#15803D':'#6B7280';
+      chip.style.fontWeight = aktif?'600':'400';
+      break;
+    }
+  }
+}
+
 function buildPrompt(){
   const n=parseInt(document.getElementById('jml-ptm').value);
   const menitPerJP=getMenitPerJP();
@@ -2110,6 +2121,7 @@ Catatan: Panduan bahasa ini HANYA berlaku untuk teks yang DITUJUKAN LANGSUNG KE 
 
 G. DESAIN PEMBELAJARAN
 - Capaian Pembelajaran (CP): ${document.getElementById('cp').value||'(sesuaikan dengan mata pelajaran dan fase)'}
+  ⚠️ PERINGATAN KERAS: Teks CP di atas adalah dokumen resmi kurikulum. Saat menampilkan CP di output modul (bagian G), SALIN PERSIS karakter demi karakter — JANGAN diringkas, JANGAN diparafrase, JANGAN ditambah, JANGAN dikurangi satu kata pun. Pelanggaran terhadap aturan ini membuat modul tidak sah secara kurikulum.
 - Tujuan Pembelajaran: ${document.getElementById('tp').value||`(buat ${jmlTP} TP yang berkesinambungan, berdasarkan CP di atas)`}
 - JUMLAH TP YANG DIINGINKAN: ${jmlTP} TP
 - Prinsip Deep Learning (WAJIB ketiganya diterapkan): ${dlPrinsip}
@@ -2188,7 +2200,10 @@ Tuliskan 3–5 poin materi (bullet list) yang relevan dengan topik dan bahan aja
 
 ## D. DIMENSI PROFIL LULUSAN
 
-Pilih 2–3 dimensi paling relevan dengan CP. WAJIB hanya dari 8 Dimensi Profil Lulusan resmi (Permendikdasmen No. 10/2025):
+${profil
+  ? `Guru telah memilih dimensi berikut — WAJIB tampilkan SEMUA dimensi ini, tidak boleh dikurangi atau diganti:
+${profil.split(', ').map((d,i)=>`${i+1}. **${d}:** [deskripsi singkat keterkaitan dengan CP dan topik "${document.getElementById('topik').value||'ini'}", maks 2 kalimat]`).join('\n')}`
+  : `Pilih 2–3 dimensi paling relevan dengan CP. WAJIB hanya dari 8 Dimensi Profil Lulusan resmi (Permendikdasmen No. 10/2025):
 1. Keimanan dan Ketakwaan terhadap Tuhan YME
 2. Kewargaan
 3. Penalaran Kritis
@@ -2199,7 +2214,8 @@ Pilih 2–3 dimensi paling relevan dengan CP. WAJIB hanya dari 8 Dimensi Profil 
 8. Komunikasi
 
 Format:
-1. **[Nama Dimensi]:** [deskripsi singkat keterkaitan dengan CP, maks 2 kalimat]
+1. **[Nama Dimensi]:** [deskripsi singkat keterkaitan dengan CP, maks 2 kalimat]`
+}
 
 ## E. TEMA KURIKULUM CINTA
 
@@ -2226,7 +2242,7 @@ Catatan: insersi yang lebih detail (ayat, hadis, percakapan) akan muncul di tiap
 
 ## G. DESAIN PEMBELAJARAN
 
-- **Capaian Pembelajaran (CP):** ...
+- **Capaian Pembelajaran (CP):** [SALIN PERSIS teks CP dari input guru — karakter demi karakter, tanpa perubahan apapun. INI BUKAN TEMPAT UNTUK MERINGKAS ATAU MENULIS ULANG.]
 - **Tujuan Pembelajaran (TP):**
   1. [TP 1]
   2. [TP 2]
@@ -2369,7 +2385,12 @@ KETENTUAN PENULISAN (WAJIB)
 - Bagian B, E, F WAJIB PADAT dan ringkas
 - Bagian H WAJIB BULLET POINTS, jangan paragraf panjang
 - Gunakan markdown PROPER: heading (#, ##, ###), bullet (-), tabel (|), bold (**)
-- Tulis LENGKAP semua bagian A sampai K + PENUTUP tanpa meringkas atau memotong di tengah`;
+- Tulis LENGKAP semua bagian A sampai K + PENUTUP tanpa meringkas atau memotong di tengah
+- RUMUS MATEMATIKA & FISIKA: JANGAN gunakan LaTeX ($...$, \\frac{}, \\sqrt{}, dsb). Tulis rumus dalam format teks Unicode biasa. Contoh yang BENAR: x² + y² = z², a/b, √x, ∫f(x)dx, Δy/Δx, E = mc². Contoh yang SALAH: $x^2 + y^2 = z^2$, \\frac{a}{b}, \\sqrt{x}.
+${['Al-Qur\'an Hadis','Akidah Akhlak','Fikih','Sejarah Kebudayaan Islam (SKI)','Bahasa Arab','Bahasa Arab Tingkat Lanjut','Ushul Fikih'].includes(document.getElementById('mapel').value)
+  ? `- TULISAN ARAB (WAJIB untuk mapel ${document.getElementById('mapel').value}): Setiap ayat Al-Qur'an dan hadis WAJIB ditulis dengan 3 lapis berurutan: (1) teks Arab asli dengan script Arabic, (2) transliterasi Latin, (3) terjemahan Indonesia. JANGAN hanya transliterasi tanpa teks Arab asli. Contoh format yang BENAR:\n  اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ\n  *Iqra' bismi rabbikallażī khalaq*\n  "Bacalah dengan nama Tuhanmu yang menciptakan" (QS. Al-'Alaq: 1)`
+  : ''
+}`;
 }
 
 // ── Helper: format tanggal Indonesia ──
@@ -2573,7 +2594,7 @@ async function generateModul(){
   document.getElementById('result-section').style.display='block';
   const box=document.getElementById('result-box');
   box.className='result-box loading';
-  box.innerHTML='<div class="spinner"></div><div>AI sedang membaca bahan ajar & menyusun modul…<br><small style="color:var(--muted2)">Biasanya selesai dalam <strong>2–5 menit</strong> tergantung jumlah pertemuan</small></div>';
+  box.innerHTML='<div class="spinner"></div><div>AI sedang membaca bahan ajar & menyusun modul…<br><small style="color:var(--muted2)">Biasanya selesai dalam <strong>1–2 menit</strong> tergantung jumlah pertemuan</small></div>';
   box.scrollIntoView({behavior:'smooth',block:'start'});
 
   try {
