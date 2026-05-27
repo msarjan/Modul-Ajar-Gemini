@@ -7,27 +7,60 @@
 <!-- Preconnect CDN agar marked.js lebih cepat diunduh -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<!-- Design System Fonts: Bricolage Grotesque + Instrument Serif -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <!-- defer: tidak blokir render, eksekusi setelah DOM siap -->
 <script defer src="https://cdn.jsdelivr.net/npm/marked@13.0.0/marked.min.js"></script>
 <style>
   /* Gunakan system font stack: 0 network request, instant, tampil baik di semua platform */
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
-    --green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;
+    /* ── Design System Tokens ── */
+    --mam-emerald-50:#EAF5F0;--mam-emerald-100:#CFE7DA;--mam-emerald-200:#A6D3B9;
+    --mam-emerald-300:#6EB793;--mam-emerald-400:#389773;--mam-emerald-500:#1B7E5B;
+    --mam-emerald-600:#0E6B53;--mam-emerald-700:#095843;--mam-emerald-800:#074535;
+    --mam-saffron-50:#FBF1DE;--mam-saffron-100:#F6E1B6;--mam-saffron-200:#EFC780;
+    --mam-saffron-300:#E5AC54;--mam-saffron-400:#D98A2B;--mam-saffron-500:#B6701D;
+    --mam-paper-0:#FFFEFB;--mam-paper-50:#FAF7F1;--mam-paper-100:#F2EDE3;--mam-paper-200:#E8E1D2;
+    --mam-ink-100:#E5E2DA;--mam-ink-200:#CFCBBE;--mam-ink-300:#B3AEA0;
+    --mam-ink-400:#9A968D;--mam-ink-500:#6E6B63;--mam-ink-600:#4A4A48;
+    --mam-ink-700:#2C2C2B;--mam-ink-800:#1E1E1D;--mam-ink-900:#141414;
+    --mam-danger:#B2412E;--mam-danger-bg:#F8E8E3;
+    --mam-shadow-1:0 1px 2px rgba(20,20,20,.04);
+    --mam-shadow-2:0 10px 30px -12px rgba(20,20,20,.12);
+    --mam-focus-ring:0 0 0 3px rgba(14,107,83,.12);
+    --mam-ease:cubic-bezier(0.2,0,0,1);
+    --mam-font-sans:'Bricolage Grotesque',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+    --mam-font-serif:'Instrument Serif',ui-serif,Georgia,serif;
+    /* ── Legacy vars (tetap dipakai komponen lama) ── */
+    --green:#0E6B53;--green-light:#EAF5F0;--green-dark:#095843;
     --blue-light:#E6F1FB;--blue:#185FA5;
-    --bg:#F8F9FA;--card:#fff;--border:#E5E7EB;--border2:#D1D5DB;
-    --text:#111827;--muted:#6B7280;--muted2:#9CA3AF;
+    --bg:#FAF7F1;--card:#FFFEFB;--border:#E5E2DA;--border2:#CFCBBE;
+    --text:#141414;--muted:#6E6B63;--muted2:#9A968D;
     --radius:10px;--radius-sm:6px;
   }
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto','Inter','Arial',sans-serif;background:var(--bg);color:var(--text);font-size:16px;min-height:100vh}
+  body{font-family:var(--mam-font-sans);background:var(--bg);color:var(--text);font-size:16px;min-height:100vh;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
   .container{max-width:780px;margin:0 auto;padding:24px 16px}
 
   /* Header */
-  .header{display:flex;align-items:center;gap:14px;margin-bottom:24px}
-  .logo{width:46px;height:46px;border-radius:12px;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .logo svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  .header-text h1{font-size:17px;font-weight:600;margin-bottom:2px}
-  .header-text p{font-size:12px;color:var(--muted)}
+  .header{
+    display:flex;align-items:center;gap:14px;
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:saturate(180%) blur(12px);
+    -webkit-backdrop-filter:saturate(180%) blur(12px);
+    background:rgba(250,247,241,0.88);
+    border-bottom:1px solid var(--mam-ink-100);
+    margin:0 -20px 24px;
+    padding:14px 20px;
+  }
+  .logo{width:40px;height:40px;border-radius:10px;background:var(--mam-emerald-600);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--mam-shadow-1)}
+  .logo svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  .header-text h1{font-size:15px;font-weight:700;margin-bottom:1px;color:var(--mam-ink-900);letter-spacing:-0.005em;line-height:1.15}
+  .header-text h1 em{font-family:var(--mam-font-serif);font-weight:400;font-style:italic;color:var(--mam-ink-600)}
+  .header-text h1 .dot{display:inline-block;width:0.28em;height:0.28em;background:var(--mam-saffron-400);border-radius:999px;vertical-align:0.1em;margin-left:0.04em}
+  .header-text p{font-size:11px;color:var(--mam-ink-400);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
   /* Progress */
   .progress-wrap{margin-bottom:20px}
@@ -41,7 +74,7 @@
   .prog-bar{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
 
   /* Cards */
-  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+  .card{background:var(--mam-paper-0);border:1px solid var(--mam-ink-100);border-radius:var(--radius);padding:20px;margin-bottom:14px;transition:border-color 200ms var(--mam-ease)}
   .sec-label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   .tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
   .tag-guru{background:var(--blue-light);color:var(--blue)}
@@ -58,7 +91,7 @@
     border:1px solid var(--border2);background:#fff;color:var(--text);
     padding:8px 11px;width:100%;outline:none;transition:border-color .15s
   }
-  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--mam-emerald-600);box-shadow:var(--mam-focus-ring)}
   .field textarea{resize:vertical;min-height:64px;line-height:1.55}
 
   /* Chips */
@@ -122,7 +155,9 @@
   .btn-row{display:flex;gap:10px;justify-content:space-between;margin-top:16px;align-items:center}
   .btn{padding:9px 18px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:#F9FAFB;color:var(--text);font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s}
   .btn:hover{background:#fff;border-color:var(--border2)}
-  .btn-primary{background:var(--green);border-color:var(--green-dark);color:#fff;font-weight:600}
+  .btn-primary{background:var(--mam-emerald-600);border-color:var(--mam-emerald-700);color:#fff;font-weight:600}
+  .btn-primary:hover{background:var(--mam-emerald-700)}
+  .btn-primary:active{background:var(--mam-emerald-800);box-shadow:inset 0 1px 0 rgba(0,0,0,.08)}
   .btn-primary:hover{background:var(--green-dark)}
   .btn-primary:disabled{opacity:.5;cursor:not-allowed}
 
@@ -228,18 +263,22 @@
   @keyframes toastOut{from{opacity:1}to{opacity:0}}
 
   /* ── Onboarding overlay ── */
-  .ob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
-  .ob-modal{background:#fff;border-radius:16px;max-width:520px;width:100%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:fadeUp .3s ease}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  .ob-emoji{font-size:44px;display:block;text-align:center;margin-bottom:10px}
-  .ob-modal h1{font-size:19px;font-weight:700;text-align:center;margin-bottom:6px}
-  .ob-modal>p{font-size:13px;color:var(--muted);text-align:center;margin-bottom:22px;line-height:1.6}
-  .ob-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
-  .ob-step{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--green-light);border-radius:8px;border:1px solid var(--border)}
-  .ob-step-icon{font-size:22px;flex-shrink:0;margin-top:1px}
-  .ob-step strong{font-size:12.5px;font-weight:600;display:block;margin-bottom:2px}
-  .ob-step p{font-size:11.5px;color:var(--muted);margin:0;line-height:1.5}
-  .ob-footer{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .ob-overlay{position:fixed;inset:0;background:rgba(20,20,20,.32);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s var(--mam-ease)}
+  .ob-modal{background:var(--mam-paper-0);border-radius:14px;max-width:540px;width:100%;padding:36px 36px 28px;box-shadow:var(--mam-shadow-2);animation:fadeUp .25s var(--mam-ease);overflow:hidden}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .ob-logo-mark{width:48px;height:48px;border-radius:10px;background:var(--mam-emerald-600);display:flex;align-items:center;justify-content:center;margin-bottom:18px;box-shadow:var(--mam-shadow-1)}
+  .ob-logo-mark svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  .ob-modal h1{font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1.15;color:var(--mam-ink-900);margin-bottom:0}
+  .ob-modal h1 em{font-family:var(--mam-font-serif);font-weight:400;font-style:italic;color:var(--mam-ink-600)}
+  .ob-modal h1 .dot{display:inline-block;width:0.28em;height:0.28em;background:var(--mam-saffron-400);border-radius:999px;vertical-align:0.12em;margin-left:0.04em}
+  .ob-modal>p{font-size:14px;color:var(--mam-ink-500);margin:14px 0 24px;line-height:1.6}
+  .ob-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+  .ob-step{display:flex;gap:14px;align-items:flex-start;padding:12px 14px;background:var(--mam-paper-50);border-radius:10px;border:1px solid var(--mam-ink-100)}
+  .ob-step-icon{width:36px;height:36px;border-radius:8px;background:var(--mam-emerald-50);color:var(--mam-emerald-700);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+  .ob-step strong{font-size:13px;font-weight:700;display:block;margin-bottom:2px;color:var(--mam-ink-900)}
+  .ob-step p{font-size:12px;color:var(--mam-ink-500);margin:0;line-height:1.55}
+  .ob-footer{display:flex;flex-direction:column;align-items:center;gap:12px}
   .ob-footer .btn{width:100%;font-size:15px;padding:12px}
   .ob-noshow{font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px}
   .ob-noshow input{cursor:pointer;accent-color:var(--green)}
@@ -265,7 +304,7 @@
   .autosave-dot.saved{background:#10B981}
 
   /* ── Disclaimer footer ── */
-  .disclaimer-footer{margin-top:32px;padding:18px 20px;background:#F8F9FA;border:1px solid var(--border);border-radius:var(--radius);font-size:11px;color:var(--muted);line-height:1.7}
+  .disclaimer-footer{margin-top:32px;padding:16px 20px;background:var(--mam-paper-100);border:1px solid var(--mam-ink-100);border-radius:var(--radius);font-size:11.5px;color:var(--mam-ink-500);line-height:1.7}
   .disclaimer-footer h4{font-size:11px;font-weight:700;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.04em}
   .disclaimer-footer ul{margin:0 0 6px 16px;padding:0}
   .disclaimer-footer ul li{margin-bottom:3px}
@@ -289,56 +328,59 @@
 <!-- ══ ONBOARDING OVERLAY (tampil hanya pertama kali) ══ -->
 <!-- ══ INVITE CODE SCREEN ══ -->
 <div id="invite-overlay" class="ob-overlay" style="display:none">
-  <div class="ob-modal">
-    <span class="ob-emoji">🔑</span>
-    <h1>Masukkan Kode Akses Beta</h1>
-    <p>Aplikasi ini saat ini dalam tahap <strong>Beta Terbatas</strong>. Masukkan kode invite yang Anda terima untuk melanjutkan.</p>
-    <div class="field" style="margin:20px 0 8px">
-      <input id="invite-input" type="text" placeholder="Contoh: BETA-01"
-        style="text-align:center;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase"
+  <div class="ob-modal" style="max-width:460px">
+    <div style="width:56px;height:56px;border-radius:10px;background:var(--mam-saffron-50);border:1px solid var(--mam-saffron-200);color:var(--mam-saffron-500);display:inline-flex;align-items:center;justify-content:center;margin-bottom:18px;font-size:26px">🔑</div>
+    <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.08em;color:var(--mam-emerald-700)">AKSES BETA · APLIKASI MODUL AJAR MADRASAH</p>
+    <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:var(--mam-ink-900);margin:0 0 12px">Masukkan <em style="font-family:var(--mam-font-serif);font-weight:400;font-style:italic;color:var(--mam-ink-600)">kode akses</em><span style="display:inline-block;width:0.28em;height:0.28em;background:var(--mam-saffron-400);border-radius:999px;vertical-align:0.12em;margin-left:0.04em"></span></h1>
+    <p style="font-size:13.5px;color:var(--mam-ink-500);line-height:1.6;margin:0 0 22px">Aplikasi ini saat ini dalam tahap <strong style="color:var(--mam-ink-900)">Beta Terbatas</strong>. Masukkan kode invite yang Anda terima untuk melanjutkan.</p>
+    <div class="field" style="margin:0 0 8px">
+      <input id="invite-input" type="text" placeholder="BETA-01"
+        style="text-align:center;font-size:20px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;background:var(--mam-paper-50);border:1.5px solid var(--mam-ink-100);border-radius:10px;padding:14px"
         oninput="this.value=this.value.toUpperCase()"
         onkeydown="if(event.key==='Enter') submitInviteCode()">
     </div>
-    <div id="invite-error" style="color:#DC2626;font-size:12px;text-align:center;min-height:18px;margin-bottom:8px"></div>
+    <div id="invite-error" style="color:var(--mam-danger);font-size:12px;font-weight:600;text-align:center;min-height:22px;margin-bottom:10px"></div>
     <div class="ob-footer">
-      <button class="btn btn-primary" onclick="submitInviteCode()">Verifikasi Kode →</button>
-      <p style="font-size:11px;color:var(--muted2);text-align:center;margin-top:8px">Belum punya kode? Hubungi <a href="https://instagram.com/sarjan.eth" target="_blank" style="color:var(--green-dark);font-weight:600">@sarjan.eth</a></p>
+      <button class="btn btn-primary" onclick="submitInviteCode()" style="width:100%;justify-content:center;padding:13px 18px;font-size:15px">Verifikasi kode →</button>
+      <p style="font-size:11.5px;color:var(--mam-ink-400);text-align:center;margin-top:14px;line-height:1.6">Belum punya kode? Hubungi <a href="https://instagram.com/sarjan.eth" target="_blank" style="color:var(--mam-emerald-700);font-weight:600;text-decoration:none">@sarjan.eth</a></p>
     </div>
   </div>
 </div>
 
 <div id="ob-overlay" class="ob-overlay" style="display:none">
   <div class="ob-modal">
-    <span class="ob-emoji">📝</span>
-    <h1>Generator Modul Ajar Madrasah</h1>
-    <p>Buat modul ajar berbasis <strong>Deep Learning × Kurikulum Berbasis Cinta (KBC)</strong> dalam hitungan menit — tinggal isi form, AI yang kerjakan.</p>
+    <div class="ob-logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    </div>
+    <h1>Modul ajar lengkap,<br><em>selesai tanpa drama copy-paste</em><span class="dot"></span></h1>
+    <p>Buat modul ajar berbasis <strong style="color:var(--mam-ink-900)">Deep Learning × Kurikulum Berbasis Cinta</strong> sesuai standar. Isi form, AI yang kerjakan.</p>
     <div class="ob-steps">
       <div class="ob-step">
         <span class="ob-step-icon">📄</span>
         <div>
           <strong>Siapkan PDF Bahan Ajar</strong>
-          <p>Bisa buku siswa, buku guru, atau handout. Format: PDF, maksimal 20 MB. Pastikan file bisa dibaca (bukan scan gambar).</p>
+          <p>Buku siswa, buku guru, atau handout. Maks. 20 MB, format PDF (bukan scan gambar).</p>
         </div>
       </div>
       <div class="ob-step">
         <span class="ob-step-icon">📋</span>
         <div>
           <strong>Siapkan Capaian Pembelajaran (CP)</strong>
-          <p>Ambil teks CP dari <strong>Keputusan Kepala BSKAP Kemendikdasmen No. 046/H/KR/2025</strong> — pilih yang sesuai jenjang dan mata pelajaran Anda.</p>
+          <p>Salin teks CP dari Keputusan BSKAP No. 046/H/KR/2025 sesuai jenjang dan mata pelajaran.</p>
         </div>
       </div>
       <div class="ob-step">
         <span class="ob-step-icon">⏱</span>
         <div>
-          <strong>Estimasi waktu ~7-12 menit</strong>
-          <p>Pengisian form ±5-10 menit · Generate AI ±1-2 menit · Hasil langsung bisa diunduh sebagai Word atau PDF.</p>
+          <strong>Estimasi waktu ~7–12 menit</strong>
+          <p>Pengisian form ±5–7 menit, generate AI ±1–2 menit, hasil bisa diunduh Word atau PDF.</p>
         </div>
       </div>
     </div>
     <div class="ob-footer">
-      <button class="btn btn-primary" onclick="startApp()">Mulai Buat Modul →</button>
+      <button class="btn btn-primary" onclick="startApp()" style="width:100%;justify-content:center;padding:13px 18px;font-size:15px">Mulai buat modul →</button>
       <label class="ob-noshow"><input type="checkbox" id="ob-noshow"> Jangan tampilkan lagi di perangkat ini</label>
-      <p style="font-size:11px;color:var(--muted2);text-align:center;line-height:1.6;margin-top:4px">⚠️ Hasil modul ajar bersifat draf AI — wajib diperiksa &amp; disesuaikan guru sebelum digunakan. Pastikan Anda memiliki hak atas bahan ajar yang diupload.</p>
+      <p style="font-size:11px;color:var(--mam-ink-400);text-align:center;line-height:1.6;margin-top:4px">⚠️ Hasil modul ajar bersifat draf AI — wajib diperiksa &amp; disesuaikan guru sebelum digunakan.</p>
     </div>
   </div>
 </div>
@@ -350,11 +392,11 @@
       <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
     </div>
     <div class="header-text">
-      <h1>Generator Modul Ajar Madrasah</h1>
+      <h1>Modul Ajar <em>untuk Madrasah</em><span class="dot"></span></h1>
       <p>Deep Learning × Kurikulum Berbasis Cinta · Kemenag RI</p>
     </div>
     <div class="header-actions">
-      <span id="kuota-badge" style="font-size:11px;font-weight:600;color:var(--green-dark);background:var(--green-light);padding:3px 10px;border-radius:20px;white-space:nowrap"></span>
+      <span id="kuota-badge" style="font-size:11px;font-weight:600;color:var(--mam-emerald-700);background:var(--mam-emerald-50);border:1px solid var(--mam-emerald-200);padding:4px 10px;border-radius:999px;white-space:nowrap"></span>
       <span class="autosave-dot" id="autosave-dot" title="Status simpan otomatis"></span>
       <button class="btn-settings" id="btn-settings" onclick="toggleSettings()">⚙️ Pengaturan</button>
       <button class="btn-reset" onclick="confirmReset()" title="Reset semua isian form">↺ Mulai Ulang</button>
