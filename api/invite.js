@@ -51,9 +51,11 @@ module.exports = async (req, res) => {
       return res.status(200).json({ valid: false, error: 'Kode tidak valid.' });
 
     const row = result.data[0];
+    const isDemo = row.kuota_sisa === -1;
     return res.status(200).json({
       valid:      true,
-      kuota_sisa: row.kuota_sisa
+      kuota_sisa: row.kuota_sisa,
+      is_demo:    isDemo
     });
   }
 
