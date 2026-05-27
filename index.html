@@ -972,7 +972,11 @@ function showToast(msg, type='error', duration=4000){
 // SISTEM KODE INVITE BETA — validasi via Supabase (server-side)
 // ══════════════════════════════════════════
 const INVITE_KEY = 'mam_invite_code';
-let _kuotaSisaCache = null; // cache kuota di memori selama sesi
+const DEMO_KEY   = 'mam_demo_mode';
+let _kuotaSisaCache = null;
+let _isDemoMode = false;
+
+function isDemoMode(){ return _isDemoMode || localStorage.getItem(DEMO_KEY) === 'true'; }
 
 function getKodeAktif(){
   return localStorage.getItem(INVITE_KEY) || '';
@@ -980,9 +984,18 @@ function getKodeAktif(){
 function updateKuotaBadge(sisa){
   const el = document.getElementById('kuota-badge');
   if(!el) return;
+  if(isDemoMode()){
+    el.textContent = '👁 Mode Pratinjau';
+    el.style.color = 'var(--mam-saffron-500)';
+    el.style.background = 'var(--mam-saffron-50)';
+    el.style.borderColor = 'var(--mam-saffron-200)';
+    return;
+  }
   if(sisa === null || sisa === undefined){ el.textContent=''; return; }
   el.textContent = `${sisa} modul tersisa`;
-  el.style.color  = sisa <= 1 ? '#DC2626' : 'var(--green-dark)';
+  el.style.color  = sisa <= 1 ? '#DC2626' : 'var(--mam-emerald-700)';
+  el.style.background = sisa <= 1 ? 'var(--mam-danger-bg)' : 'var(--mam-emerald-50)';
+  el.style.borderColor = sisa <= 1 ? 'var(--mam-danger)' : 'var(--mam-emerald-200)';
 }
 
 // ── Panggil /api/invite di Vercel ──
@@ -1019,6 +1032,19 @@ async function submitInviteCode(){
       return;
     }
 
+    // Demo mode — kuota_sisa = -1
+    if(data.is_demo){
+      localStorage.setItem(INVITE_KEY, input);
+      localStorage.setItem(DEMO_KEY, 'true');
+      _isDemoMode = true;
+      _kuotaSisaCache = -1;
+      updateKuotaBadge(-1);
+      document.getElementById('invite-overlay').style.display = 'none';
+      if(btn){ btn.disabled = false; btn.textContent = 'Masuk'; }
+      checkOnboarding();
+      return;
+    }
+
     if(data.kuota_sisa <= 0){
       errEl.textContent = '❌ Kuota kode ini sudah habis. Hubungi @sarjan.eth untuk kode baru.';
       if(btn){ btn.disabled = false; btn.textContent = 'Masuk'; }
@@ -1049,9 +1075,26 @@ async function checkInviteCode(){
   // Verifikasi ke Supabase
   try {
     const data = await callInviteAPI('check', kode);
-    if(!data.valid || data.kuota_sisa <= 0){
-      // Kode tidak valid atau kuota habis — paksa masukkan kode baru
+    if(!data.valid){
       localStorage.removeItem(INVITE_KEY);
+      localStorage.removeItem(DEMO_KEY);
+      _isDemoMode = false;
+      _kuotaSisaCache = null;
+      document.getElementById('invite-overlay').style.display = 'flex';
+      return false;
+    }
+    // Demo mode
+    if(data.is_demo){
+      localStorage.setItem(DEMO_KEY, 'true');
+      _isDemoMode = true;
+      _kuotaSisaCache = -1;
+      updateKuotaBadge(-1);
+      return true;
+    }
+    if(data.kuota_sisa <= 0){
+      localStorage.removeItem(INVITE_KEY);
+      localStorage.removeItem(DEMO_KEY);
+      _isDemoMode = false;
       _kuotaSisaCache = null;
       document.getElementById('invite-overlay').style.display = 'flex';
       return false;
@@ -2603,6 +2646,12 @@ function resetKodeInvite(){
 }
 
 async function generateModul(){
+  // Demo mode — tidak bisa generate
+  if(isDemoMode()){
+    showToast('Mode Pratinjau — DM <a href="https://instagram.com/sarjan.eth" target="_blank" style="color:#fff;font-weight:700;text-decoration:underline">@sarjan.eth</a> untuk Kode Akses', 'warning', 5000);
+    return;
+  }
+
   // Cek kuota dari cache (sudah diambil saat checkInviteCode)
   const sisa = _kuotaSisaCache;
   if(sisa !== null && sisa <= 0){
