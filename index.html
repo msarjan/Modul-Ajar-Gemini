@@ -2630,6 +2630,8 @@ function showKuotaHabisBanner(){
 function resetKodeInvite(){
   // Hapus kode dari localStorage & reset cache
   localStorage.removeItem(INVITE_KEY);
+  localStorage.removeItem(DEMO_KEY);
+  _isDemoMode = false;
   _kuotaSisaCache = null;
   // Reset badge
   updateKuotaBadge(null);
