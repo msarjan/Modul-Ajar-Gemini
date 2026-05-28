@@ -2,7 +2,7 @@
 // API key disimpan di environment variable Vercel, tidak pernah terekspos ke browser
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const MODEL          = 'gemini-3.5-flash';
+const MODEL          = 'gemini-3.1-flash-lite';
 const MAX_TOKENS     = 65536;
 
 const setCors = (res) => {
