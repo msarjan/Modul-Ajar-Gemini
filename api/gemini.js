@@ -75,6 +75,7 @@ module.exports = async (req, res) => {
           messages,
           max_tokens:  max_tokens || MAX_TOKENS,
           temperature: 1,
+          reasoning: { effort: 'low' },
         })
       }
     );
