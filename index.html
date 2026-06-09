@@ -914,7 +914,6 @@
       <h2>📄 Hasil Modul Ajar</h2>
       <div class="result-actions">
         <button class="copy-btn" onclick="copyResult()">📋 Salin</button>
-        <button class="copy-btn" onclick="openInGoogleDocs()">📝 Buka di Google Docs</button>
         <button class="copy-btn" onclick="downloadWord()">📄 Download Word</button>
         <button class="copy-btn primary" onclick="downloadPDF()">🖨️ Download PDF</button>
       </div>
@@ -3018,81 +3017,6 @@ function openPreviewWindow(autoAction){
 }
 
 // ── Download as Word ──
-// ── Buka di Google Docs ──
-function openInGoogleDocs(){
-  const resultBox = document.getElementById('result-box');
-  const html = resultBox ? resultBox.innerHTML : '';
-  if(!html || html.trim()===''){
-    showToast('Belum ada hasil modul untuk dibuka.');
-    return;
-  }
-
-  // Baca warna tema aktif
-  const rs = getComputedStyle(document.documentElement);
-  const cGreen     = rs.getPropertyValue('--green').trim()     || '#1D9E75';
-  const cGreenDark = rs.getPropertyValue('--green-dark').trim()|| '#0F6E56';
-  const cBorder    = rs.getPropertyValue('--border').trim()    || '#E5E7EB';
-  const cMuted     = rs.getPropertyValue('--muted').trim()     || '#6B7280';
-
-  const fullHtml = `<!DOCTYPE html>
-<html lang="id"><head><meta charset="UTF-8">
-<title>Modul Ajar</title>
-<style>
-  body{font-family:Arial,sans-serif;font-size:12pt;line-height:1.7;color:#222;margin:2cm 2.5cm;background:#fff}
-  h1{font-size:18pt;text-align:center;font-weight:700;color:#111;margin-bottom:6pt}
-  h1+p{text-align:center;font-style:italic;color:${cMuted};font-size:11pt;margin-bottom:20pt}
-  h2{font-size:13pt;font-weight:700;color:${cGreenDark};border-bottom:1.5pt solid ${cGreen};padding-bottom:3pt;margin:20pt 0 10pt;text-transform:uppercase}
-  h3{font-size:12pt;font-weight:700;margin:16pt 0 8pt;color:#111}
-  h4{font-size:11pt;font-weight:600;margin:12pt 0 5pt}
-  p{margin-bottom:8pt}
-  ul,ol{margin:5pt 0 10pt 24pt}
-  li{margin-bottom:3pt;line-height:1.65}
-  strong{font-weight:700}
-  em{font-style:italic}
-  /* Tabel konten — dengan border */
-  table{border-collapse:collapse;width:100%;margin:8pt 0 12pt}
-  th,td{border:1pt solid #ccc;padding:6pt 9pt;text-align:left;vertical-align:top;font-size:11pt}
-  th{background:none;font-weight:600}
-  td:first-child{font-weight:600}
-  /* Tabel penutup — tanpa border */
-  table[style*="border:none"],table[style*="border:none"] td,table[style*="border:none"] th{border:none!important;background:none!important}
-  hr{border:none;border-top:1pt solid ${cBorder};margin:18pt 0}
-  div[style*="text-align:right"]{text-align:right!important}
-</style></head>
-<body>${html}</body></html>`;
-
-  const blob = new Blob([fullHtml], {type:'text/html;charset=utf-8'});
-  const url  = URL.createObjectURL(blob);
-  showGoogleDocsModal(url);
-}
-
-function showGoogleDocsModal(htmlUrl){
-  // Hapus modal lama jika ada
-  const old = document.getElementById('gdocs-modal');
-  if(old) old.remove();
-
-  const modal = document.createElement('div');
-  modal.id = 'gdocs-modal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.innerHTML = `
-    <div style="background:#fff;border-radius:12px;padding:28px;max-width:460px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-      <h3 style="margin:0 0 12px;font-size:16px;color:#1a5276">📝 Buka di Google Docs</h3>
-      <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 16px">Ikuti 3 langkah mudah:</p>
-      <ol style="font-size:13px;color:#333;line-height:1.8;margin:0 0 20px;padding-left:20px">
-        <li>Klik tombol <strong>"Download HTML"</strong> di bawah</li>
-        <li>Buka <strong>drive.google.com</strong> → klik <strong>"+ Baru"</strong> → <strong>"Upload file"</strong> → pilih file HTML yang baru didownload</li>
-        <li>Setelah terupload, klik kanan file → <strong>"Buka dengan Google Docs"</strong> — modul akan tampil rapi dan siap diedit</li>
-      </ol>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a href="${htmlUrl}" download="modul-ajar.html" style="padding:9px 18px;background:#1E8449;color:#fff;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;display:inline-block">⬇️ Download HTML</a>
-        <button onclick="document.getElementById('gdocs-modal').remove()" style="padding:9px 18px;background:#f5f5f5;color:#555;border:1px solid #ddd;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Tutup</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  modal.addEventListener('click', e => { if(e.target===modal) modal.remove(); });
-}
-
 // ── Download as PDF ──
 function downloadPDF(){
   const resultBox = document.getElementById('result-box');
