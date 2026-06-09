@@ -2357,6 +2357,15 @@ Catatan: insersi yang lebih detail (ayat, hadis, percakapan) akan muncul di tiap
 2. WAJIB IKUTI SINTAKS MODEL "${getSelectedModels()||'CTL'}" DENGAN BENAR di setiap Kegiatan Inti
 3. Setiap tahap sintaks = 1 bullet utama dengan sub-bullets detail aktivitas
 4. Bahasa singkat, konkret, ada arahan praktis untuk guru
+${['Matematika','Fisika'].includes(document.getElementById('mapel').value) ? `
+🔢 ATURAN KHUSUS MAPEL ${document.getElementById('mapel').value.toUpperCase()} (WAJIB DIPATUHI):
+- Setiap kali ada konsep yang melibatkan rumus, WAJIB tuliskan rumusnya secara eksplisit di dalam narasi aktivitas
+- Gunakan notasi Unicode biasa — contoh: A'(x, -y) untuk refleksi sumbu x, V = πr²t untuk volume tabung, F = m × a untuk hukum Newton
+- DILARANG KERAS menggunakan LaTeX (\\frac, \\sqrt, \\times, dll) — tidak bisa ditampilkan di aplikasi ini
+- DILARANG hanya menyebut nama rumus tanpa menuliskan rumusnya
+- Contoh BENAR: "Guru menjelaskan: titik A(x, y) direfleksikan terhadap sumbu x menghasilkan A'(x, -y)"
+- Contoh SALAH: "Guru menjelaskan konsep refleksi terhadap sumbu x" (tanpa rumus eksplisit)
+` : ''}
 
 Format per pertemuan:
 
@@ -2770,13 +2779,30 @@ async function generateModul(){
       }
       box.innerHTML=`<div style="padding:20px;color:#991B1B;background:#FEE2E2;border-radius:8px;line-height:1.7">${pesanError}</div>`;
     } else {
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim()||'';
-      if(!text){
+      const text        = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+      const finish      = data?.candidates?.[0]?.finishReason || '';
+      const gagalFinish = finish === 'SAFETY' || finish === 'MAX_TOKENS';
+
+      if(!text || gagalFinish){
         box.className='result-box';
-        box.innerHTML='<div style="padding:20px;color:#92400E;background:#FEF3C7;border-radius:8px"><strong>⚠️ AI tidak mengembalikan hasil.</strong><br>Mungkin ada masalah dengan bahan ajar atau input. Coba periksa kembali bahan ajar (pastikan terbaca, bukan scan gambar) atau coba lagi.</div>';
+        let pesanGagal = '';
+        if(finish === 'SAFETY'){
+          pesanGagal = `<strong>⚠️ Konten diblokir oleh sistem keamanan AI.</strong><br><br>
+            Periksa kembali input Anda — mungkin ada kata atau frasa yang perlu disesuaikan, lalu coba lagi.<br><br>
+            <small style="color:#7F1D1D">Kuota Anda tidak berkurang.</small>`;
+        } else if(finish === 'MAX_TOKENS'){
+          pesanGagal = `<strong>⚠️ Output AI melebihi batas panjang.</strong><br><br>
+            Coba kurangi jumlah pertemuan, lalu generate ulang.<br><br>
+            <small style="color:#7F1D1D">Kuota Anda tidak berkurang.</small>`;
+        } else {
+          pesanGagal = `<strong>⚠️ AI tidak mengembalikan hasil.</strong><br><br>
+            Coba periksa kembali bahan ajar (pastikan terbaca, bukan scan gambar) atau coba lagi.<br><br>
+            <small style="color:#7F1D1D">Kuota Anda tidak berkurang.</small>`;
+        }
+        box.innerHTML=`<div style="padding:20px;color:#92400E;background:#FEF3C7;border-radius:8px;line-height:1.7">${pesanGagal}</div>`;
       } else {
         lastGeneratedMarkdown=text;
-        // Kurangi kuota ke Supabase setelah generate berhasil
+        // Kurangi kuota ke Supabase setelah generate berhasil (hanya jika finishReason: STOP)
         const sisaBaru = await kurangKuota();
         if(sisaBaru <= 1){
           showToast(`✅ Modul berhasil dibuat! Sisa kuota Anda: ${sisaBaru} modul lagi.`, 'warning');
@@ -2786,7 +2812,7 @@ async function generateModul(){
         try {
           marked.setOptions({gfm:true,breaks:false});
           box.innerHTML=marked.parse(text);
-        } catch(err) {
+        } catch(err){
           box.textContent=text;
         }
       }
