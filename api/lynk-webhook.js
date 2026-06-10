@@ -37,63 +37,60 @@ function validasiSignature(body, signature, merchantKey) {
   return expected === signature;
 }
 
-// Kirim email via Resend
+// Kirim email via Gmail SMTP (Nodemailer)
 async function kirimEmail({ email, nama, kode, namaPaket, kuota }) {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-      'Content-Type' : 'application/json',
+  const nodemailer = require('nodemailer');
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
     },
-    body: JSON.stringify({
-      from   : 'Modul Ajar Madrasah <onboarding@resend.dev>',
-      to     : [email],
-      subject: 'Kode Kuota Modul Ajar Madrasah kamu sudah siap! 🎉',
-      html   : `
-        <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; color: #141414;">
-          <h2 style="color: #0E6B53;">Halo ${nama},</h2>
-          <p>Terima kasih sudah membeli <strong>${namaPaket}</strong>. Berikut kode kuota kamu:</p>
-
-          <div style="
-            background: #FAF7F1;
-            border: 2px solid #0E6B53;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            margin: 24px 0;
-          ">
-            <p style="margin: 0 0 8px; font-size: 14px; color: #666;">Kode Aksesmu</p>
-            <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #0E6B53;">${kode}</p>
-          </div>
-
-          <p><strong>Kuota:</strong> ${kuota} modul</p>
-
-          <p><strong>Cara pakai:</strong></p>
-          <ol style="line-height: 1.8;">
-            <li>Buka <a href="https://modul-ajar-madrasah.vercel.app" style="color: #0E6B53;">modul-ajar-madrasah.vercel.app</a></li>
-            <li>Masukkan kode di kolom <strong>"Kode Akses"</strong></li>
-            <li>Mulai generate modul ajar! 🚀</li>
-          </ol>
-
-          <p style="margin-top: 32px; font-size: 14px; color: #666;">
-            Ada pertanyaan? DM Instagram 
-            <a href="https://instagram.com/sarjan.eth" style="color: #0E6B53;">@sarjan.eth</a>
-          </p>
-
-          <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
-          <p style="font-size: 12px; color: #999; text-align: center;">
-            Tim Modul Ajar Madrasah · Generator modul ajar berbasis AI untuk guru madrasah Indonesia
-          </p>
-        </div>
-      `,
-    }),
   });
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Resend error: ${err}`);
-  }
-  return res.json();
+  await transporter.sendMail({
+    from: `"Modul Ajar Madrasah" <${process.env.GMAIL_USER}>`,
+    to: email,
+    subject: 'Kode Kuota Modul Ajar Madrasah kamu sudah siap! 🎉',
+    html: `
+      <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; color: #141414;">
+        <h2 style="color: #0E6B53;">Halo ${nama},</h2>
+        <p>Terima kasih sudah membeli <strong>${namaPaket}</strong>. Berikut kode kuota kamu:</p>
+
+        <div style="
+          background: #FAF7F1;
+          border: 2px solid #0E6B53;
+          border-radius: 12px;
+          padding: 20px;
+          text-align: center;
+          margin: 24px 0;
+        ">
+          <p style="margin: 0 0 8px; font-size: 14px; color: #666;">Kode Aksesmu</p>
+          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #0E6B53;">${kode}</p>
+        </div>
+
+        <p><strong>Kuota:</strong> ${kuota} modul</p>
+
+        <p><strong>Cara pakai:</strong></p>
+        <ol style="line-height: 1.8;">
+          <li>Buka <a href="https://modul-ajar-madrasah.vercel.app" style="color: #0E6B53;">modul-ajar-madrasah.vercel.app</a></li>
+          <li>Masukkan kode di kolom <strong>"Kode Akses"</strong></li>
+          <li>Mulai generate modul ajar! 🚀</li>
+        </ol>
+
+        <p style="margin-top: 32px; font-size: 14px; color: #666;">
+          Ada pertanyaan? DM Instagram 
+          <a href="https://instagram.com/sarjan.eth" style="color: #0E6B53;">@sarjan.eth</a>
+        </p>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+        <p style="font-size: 12px; color: #999; text-align: center;">
+          Tim Modul Ajar Madrasah · Generator modul ajar berbasis AI untuk guru madrasah Indonesia
+        </p>
+      </div>
+    `,
+  });
 }
 
 // ── Handler utama ─────────────────────────────────────────────
