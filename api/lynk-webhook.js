@@ -119,7 +119,8 @@ module.exports = async function handler(req, res) {
     console.log("PAYLOAD LYNK:", JSON.stringify(req.body, null, 2));
 
     // Ekstrak data dari payload Lynk.id
-    const { customer, items, totals, refId } = req.body;
+    const messageData = req.body?.data?.message_data;
+    const { customer, items, totals, refId } = messageData;
     const email     = customer?.email;
     const nama      = customer?.name || 'Guru';
     const namaPaket = items?.[0]?.title;
