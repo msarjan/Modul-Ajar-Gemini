@@ -6,5 +6,6 @@
     "api/invite.js": {
       "maxDuration": 10
     }
-  }
+  },
+  "regions": ["sin1"]
 }
