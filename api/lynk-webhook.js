@@ -1,0 +1,183 @@
+// api/lynk-webhook.js
+// Vercel Serverless Function
+// Menerima webhook dari Lynk.id → generate kode GBD → insert Supabase → kirim email via Resend
+
+const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
+
+// ── Mapping nama produk Lynk.id → jumlah kuota ───────────────
+const PRODUK_KUOTA = {
+  'Kuota x1 Modul' : 1,
+  'Kuota x4 Modul' : 4,
+  'Kuota x10 Modul': 10,
+};
+// ─────────────────────────────────────────────────────────────
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
+
+// Generate kode GBD-XXXXXX (6 karakter, tanpa 0/O dan 1/I)
+function generateKode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let result = 'GBD-';
+  for (let i = 0; i < 6; i++) {
+    result += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return result;
+}
+
+// Validasi signature Lynk.id
+function validasiSignature(body, signature, merchantKey) {
+  const expected = crypto
+    .createHmac('sha256', merchantKey)
+    .update(body)
+    .digest('hex');
+  return expected === signature;
+}
+
+// Kirim email via Resend
+async function kirimEmail({ email, nama, kode, namaPaket, kuota }) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type' : 'application/json',
+    },
+    body: JSON.stringify({
+      from   : 'Modul Ajar Madrasah <onboarding@resend.dev>',
+      to     : [email],
+      subject: 'Kode Kuota Modul Ajar Madrasah kamu sudah siap! 🎉',
+      html   : `
+        <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; color: #141414;">
+          <h2 style="color: #0E6B53;">Halo ${nama},</h2>
+          <p>Terima kasih sudah membeli <strong>${namaPaket}</strong>. Berikut kode kuota kamu:</p>
+
+          <div style="
+            background: #FAF7F1;
+            border: 2px solid #0E6B53;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 24px 0;
+          ">
+            <p style="margin: 0 0 8px; font-size: 14px; color: #666;">Kode Aksesmu</p>
+            <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #0E6B53;">${kode}</p>
+          </div>
+
+          <p><strong>Kuota:</strong> ${kuota} modul</p>
+
+          <p><strong>Cara pakai:</strong></p>
+          <ol style="line-height: 1.8;">
+            <li>Buka <a href="https://modul-ajar-madrasah.vercel.app" style="color: #0E6B53;">modul-ajar-madrasah.vercel.app</a></li>
+            <li>Masukkan kode di kolom <strong>"Kode Akses"</strong></li>
+            <li>Mulai generate modul ajar! 🚀</li>
+          </ol>
+
+          <p style="margin-top: 32px; font-size: 14px; color: #666;">
+            Ada pertanyaan? DM Instagram 
+            <a href="https://instagram.com/sarjan.eth" style="color: #0E6B53;">@sarjan.eth</a>
+          </p>
+
+          <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+          <p style="font-size: 12px; color: #999; text-align: center;">
+            Tim Modul Ajar Madrasah · Generator modul ajar berbasis AI untuk guru madrasah Indonesia
+          </p>
+        </div>
+      `,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Resend error: ${err}`);
+  }
+  return res.json();
+}
+
+// ── Handler utama ─────────────────────────────────────────────
+module.exports = async function handler(req, res) {
+  // Hanya terima POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    // Ambil raw body untuk validasi signature
+    const rawBody = JSON.stringify(req.body);
+    const signature = req.headers['x-lynk-signature'];
+
+    // Validasi signature
+    if (!validasiSignature(rawBody, signature, process.env.LYNK_MERCHANT_KEY)) {
+      console.error('Signature tidak valid');
+      return res.status(401).json({ error: 'Invalid signature' });
+    }
+
+    // Ekstrak data dari payload Lynk.id
+    const { customer, items, totals, refId } = req.body;
+    const email     = customer?.email;
+    const nama      = customer?.name || 'Guru';
+    const namaPaket = items?.[0]?.title;
+    const grandTotal = totals?.grandTotal;
+
+    // Validasi field wajib
+    if (!email || !namaPaket) {
+      console.error('Payload tidak lengkap:', { email, namaPaket });
+      return res.status(400).json({ error: 'Payload tidak lengkap' });
+    }
+
+    // Mapping produk → kuota
+    const kuota = PRODUK_KUOTA[namaPaket];
+    if (!kuota) {
+      console.error('Nama produk tidak dikenali:', namaPaket);
+      return res.status(400).json({ error: `Produk tidak dikenali: ${namaPaket}` });
+    }
+
+    // Generate kode unik (coba sampai dapat yang belum ada)
+    let kode;
+    let attempts = 0;
+    while (attempts < 10) {
+      const kandidat = generateKode();
+      const { data: existing } = await supabase
+        .from('invite_codes')
+        .select('code')
+        .eq('code', kandidat)
+        .single();
+
+      if (!existing) {
+        kode = kandidat;
+        break;
+      }
+      attempts++;
+    }
+
+    if (!kode) {
+      throw new Error('Gagal generate kode unik setelah 10 percobaan');
+    }
+
+    // Insert kode ke Supabase
+    const { error: insertError } = await supabase
+      .from('invite_codes')
+      .insert({
+        code        : kode,
+        kuota_total : kuota,
+        kuota_sisa  : kuota,
+        Nama        : `${nama} - ${email} - refId:${refId}`,
+      });
+
+    if (insertError) {
+      throw new Error(`Supabase insert error: ${insertError.message}`);
+    }
+
+    // Kirim email ke pembeli
+    await kirimEmail({ email, nama, kode, namaPaket, kuota });
+
+    console.log(`✅ Webhook OK | refId:${refId} | ${email} | ${namaPaket} | kode:${kode}`);
+    return res.status(200).json({ success: true, kode });
+
+  } catch (err) {
+    console.error('Webhook error:', err.message);
+    return res.status(500).json({ error: err.message });
+  }
+};
