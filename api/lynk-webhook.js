@@ -115,6 +115,9 @@ module.exports = async function handler(req, res) {
     //   return res.status(401).json({ error: 'Invalid signature' });
     // }
 
+    // Log payload asli untuk debugging
+    console.log("PAYLOAD LYNK:", JSON.stringify(req.body, null, 2));
+
     // Ekstrak data dari payload Lynk.id
     const { customer, items, totals, refId } = req.body;
     const email     = customer?.email;
