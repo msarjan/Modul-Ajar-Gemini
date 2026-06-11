@@ -1386,6 +1386,10 @@
             Beli Kuota
           </a>
 
+          <p style="font-size:13px;font-weight:600;color:var(--mam-emerald-700);text-align:center;margin:12px 0 4px;line-height:1.5">
+            💡 Bikin 1 modul = harga 1 Indomie goreng 🍜
+          </p>
+
           <p class="p3-foot">
             <span style="font-size:11px;color:var(--mam-ink-300)">Dengan melanjutkan, Anda menyetujui modul ajar adalah <em class="mam-serif">draf awal</em> yang wajib divalidasi guru.</span>
           </p>
@@ -2159,7 +2163,7 @@ async function submitInviteCode(){
     checkOnboarding();
 
   } catch(e) {
-    errEl.textContent = '⚠️ Gagal terhubung ke server. Coba lagi.';
+    errEl.textContent = '⚠️ Gagal terhubung ke server. Coba lagi. Kuota Anda tidak berkurang.';
     if(btn){ btn.disabled = false; btn.textContent = 'Masuk'; }
   }
 }
@@ -3927,6 +3931,8 @@ async function generateModul(){
         const sisaBaru = await kurangKuota();
         if(sisaBaru <= 1){
           showToast(`✅ Modul berhasil dibuat! Sisa kuota Anda: ${sisaBaru} modul lagi.`, 'warning');
+        } else {
+          showToast(`✅ Modul berhasil dibuat! Sisa kuota: ${sisaBaru} modul.`, 'success');
         }
         box.className='result-box';
         // Render markdown to HTML
@@ -4462,7 +4468,7 @@ ${css}</style></head>
   <ul>
     <li><strong>Draf AI, bukan produk final.</strong> Guru wajib memeriksa &amp; memvalidasi isi modul sebelum digunakan di kelas.</li>
     <li><strong>Privasi &amp; hak cipta.</strong> Form dan PDF diproses langsung di browser untuk generate, tidak disimpan di server. Pastikan Anda berhak atas bahan ajar yang diunggah.</li>
-    <li><strong>Independen.</strong> Aplikasi non-komersial, tidak berafiliasi resmi dengan Kemenag RI; rujukan kurikulum dipakai untuk keperluan pedagogis.</li>
+    <li><strong>Independen.</strong> Aplikasi tidak berafiliasi resmi dengan Kemenag RI; rujukan kurikulum dipakai untuk keperluan pedagogis.</li>
   </ul>
   <p style="display:flex;align-items:center;flex-wrap:wrap;gap:8px">
     <span>Dikembangkan oleh <strong>Muh. Sarjan</strong></span>
