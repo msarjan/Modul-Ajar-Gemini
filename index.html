@@ -353,7 +353,7 @@
 
   /* Disclaimer footer */
   .disclaimer-footer{margin-top:34px;padding:18px 22px;background:var(--mam-paper-100);border:1px solid var(--mam-ink-100);border-radius:var(--mam-radius);font-size:11.5px;color:var(--mam-ink-500);line-height:1.7}
-  .disclaimer-footer h4{font-size:11px;font-weight:700;color:var(--mam-ink-800);margin-bottom:8px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.05em}
+  .disclaimer-footer h4,.disclaimer-footer-title{font-size:11px;font-weight:700;color:var(--mam-ink-800);margin-bottom:8px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.05em}
   .disclaimer-footer ul{margin:0 0 6px 16px;padding:0}
   .disclaimer-footer ul li{margin-bottom:3px}
   .disclaimer-footer p{margin:4px 0 0}
@@ -1629,7 +1629,7 @@
     <div class="card">
       <div class="sec-label">⏱ Alokasi Waktu <span class="tag tag-guru">✏ Diisi Guru</span></div>
       <div class="field" style="margin-bottom:14px">
-        <label>Jumlah Pertemuan</label>
+        <label for="jml-ptm">Jumlah Pertemuan</label>
         <select id="jml-ptm" onchange="renderJP()" style="max-width:220px">
           <option value="1">1 Pertemuan</option><option value="2">2 Pertemuan</option>
           <option value="3" selected>3 Pertemuan</option><option value="4">4 Pertemuan</option>
@@ -1642,7 +1642,7 @@
 
     <div class="card">
       <div class="sec-label">📚 Model Pembelajaran <span class="tag tag-guru">✏ Pilih satu</span></div>
-      <select id="model-select" onchange="handleModelChange()" style="width:100%;font-size:13px;padding:8px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:#fff;color:var(--text);font-family:inherit;outline:none">
+      <select id="model-select" aria-label="Model Pembelajaran" onchange="handleModelChange()" style="width:100%;font-size:13px;padding:8px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:#fff;color:var(--text);font-family:inherit;outline:none">
         <option value="">— Pilih model pembelajaran —</option>
         <option value="Contextual Teaching and Learning (CTL)">Contextual Teaching and Learning (CTL)</option>
         <option value="Problem Based Learning (PBL)">Problem Based Learning (PBL)</option>
@@ -4468,7 +4468,7 @@ ${css}</style></head>
 
 <!-- ══ DISCLAIMER FOOTER ══ -->
 <div class="disclaimer-footer" style="max-width:780px;margin:0 auto 32px;padding-left:16px;padding-right:16px">
-  <h4>⚠️ Disclaimer Singkat</h4>
+  <p class="disclaimer-footer-title">⚠️ Disclaimer Singkat</p>
   <ul>
     <li><strong>Draf AI, bukan produk final.</strong> Guru wajib memeriksa &amp; memvalidasi isi modul sebelum digunakan di kelas.</li>
     <li><strong>Privasi &amp; hak cipta.</strong> Form dan PDF diproses langsung di browser untuk generate, tidak disimpan di server. Pastikan Anda berhak atas bahan ajar yang diunggah.</li>
