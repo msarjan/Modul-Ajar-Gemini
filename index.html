@@ -1366,10 +1366,10 @@
           <h3>Verifikasi <span class="serif">kode invite</span></h3>
           <p class="desc">Masukkan kode persis seperti yang dikirim. Huruf besar dan tanda hubung tetap dipertahankan.</p>
 
-          <div class="input-label">
+          <label class="input-label" for="invite-input">
             <span>Kode akses</span>
             <span class="req">* Wajib</span>
-          </div>
+          </label>
           <input type="text" class="code-input" id="invite-input" placeholder="GBD-XXXXXX"
             autocomplete="off" spellcheck="false" inputmode="text" maxlength="12"
             oninput="this.value=this.value.toUpperCase()"
@@ -1483,15 +1483,15 @@
         <div class="settings-section-title">⚙️ Preferensi</div>
         <div class="settings-toggle-row">
           <div><div class="settings-toggle-label">Tampilkan Panduan Awal</div><div class="settings-toggle-desc">Tampilkan layar panduan saat buka aplikasi</div></div>
-          <label class="toggle-switch"><input type="checkbox" id="pref-onboarding" onchange="savePref('onboarding',this.checked)"><span class="toggle-slider"></span></label>
+          <label class="toggle-switch"><input type="checkbox" id="pref-onboarding" aria-label="Tampilkan Panduan Awal" onchange="savePref('onboarding',this.checked)"><span class="toggle-slider"></span></label>
         </div>
         <div class="settings-toggle-row">
           <div><div class="settings-toggle-label">Auto-save Isian Form</div><div class="settings-toggle-desc">Simpan otomatis topik, CP, dan TP ke browser</div></div>
-          <label class="toggle-switch"><input type="checkbox" id="pref-autosave" checked onchange="savePref('autosave',this.checked)"><span class="toggle-slider"></span></label>
+          <label class="toggle-switch"><input type="checkbox" id="pref-autosave" aria-label="Auto-save Isian Form" checked onchange="savePref('autosave',this.checked)"><span class="toggle-slider"></span></label>
         </div>
         <div class="settings-toggle-row">
           <div><div class="settings-toggle-label">Simpan Data Identitas</div><div class="settings-toggle-desc">Nama guru, madrasah, kota tersimpan otomatis</div></div>
-          <label class="toggle-switch"><input type="checkbox" id="pref-identity" checked onchange="savePref('identity',this.checked)"><span class="toggle-slider"></span></label>
+          <label class="toggle-switch"><input type="checkbox" id="pref-identity" aria-label="Simpan Data Identitas" checked onchange="savePref('identity',this.checked)"><span class="toggle-slider"></span></label>
         </div>
       </div>
     </div>
@@ -1554,15 +1554,16 @@
       <div id="upload-preview" style="display:none;margin-top:10px;padding:11px 14px;background:var(--green-light);border:1px solid #9FE1CB;border-radius:var(--radius-sm);align-items:center;gap:10px">
         <span style="font-size:18px">📄</span>
         <span id="upload-filename" style="flex:1;font-size:13px;color:var(--green-dark);font-weight:500"></span>
-        <button onclick="removeUpload()" style="background:none;border:none;color:var(--green-dark);cursor:pointer;font-size:16px;padding:0 4px">✕</button>
+        <button onclick="removeUpload()" aria-label="Hapus file yang diupload" style="background:none;border:none;color:var(--green-dark);cursor:pointer;font-size:16px;padding:0 4px">✕</button>
       </div>
 
       <div class="div"></div>
 
-      <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:8px">Cara AI menggunakan bahan ajar:</label>
-      <div class="opt-stack">
-        <label class="opt-card" onclick="selectMode('ikuti')" id="mode-ikuti">
-          <input type="radio" name="mode-bahan-ajar" value="ikuti">
+      <fieldset style="border:none;padding:0;margin:0">
+        <legend style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:8px;padding:0">Cara AI menggunakan bahan ajar:</legend>
+        <div class="opt-stack">
+          <label class="opt-card" onclick="selectMode('ikuti')" id="mode-ikuti">
+            <input type="radio" name="mode-bahan-ajar" value="ikuti">
           <div class="opt-card-body">
             <div class="opt-card-title">📑 Ikuti struktur bahan ajar persis</div>
             <div class="opt-card-desc">Modul disusun mengikuti bab/sub-bab bahan ajar secara berurutan. Cocok jika ingin modul yang patuh pada buku.</div>
@@ -1575,25 +1576,26 @@
             <div class="opt-card-desc">AI gunakan bahan ajar sebagai sumber utama, tetapi bebas menyesuaikan urutan & penekanan agar alur pembelajaran lebih baik.</div>
           </div>
         </label>
-      </div>
+        </div>
+      </fieldset>
     </div>
 
     <div class="card">
       <div class="sec-label">A. Identitas Umum <span class="tag tag-guru">✏ Diisi Guru</span></div>
       <div class="grid2">
-        <div class="field"><label>Nama Penyusun <span style="color:#DC2626;font-weight:700">*</span></label><input id="nama" type="text" placeholder="Nama lengkap + gelar"></div>
-        <div class="field"><label>NIP (opsional)</label><input id="nip" type="text" placeholder="NIP guru"></div>
+        <div class="field"><label for="nama">Nama Penyusun <span style="color:#DC2626;font-weight:700">*</span></label><input id="nama" type="text" placeholder="Nama lengkap + gelar"></div>
+        <div class="field"><label for="nip">NIP (opsional)</label><input id="nip" type="text" placeholder="NIP guru"></div>
       </div>
       <div class="grid2">
-        <div class="field"><label>Nama Madrasah</label><input id="madrasah" type="text" placeholder="Nama madrasah"></div>
-        <div class="field"><label>Kota / Kabupaten</label><input id="kota" type="text" placeholder="Nama kota"></div>
+        <div class="field"><label for="madrasah">Nama Madrasah</label><input id="madrasah" type="text" placeholder="Nama madrasah"></div>
+        <div class="field"><label for="kota">Kota / Kabupaten</label><input id="kota" type="text" placeholder="Nama kota"></div>
       </div>
       <div class="grid2">
-        <div class="field"><label>Nama Kepala Madrasah</label><input id="kepsek" type="text" placeholder="Nama + gelar"></div>
-        <div class="field"><label>NIP Kepala Madrasah</label><input id="nip-kepsek" type="text" placeholder="NIP kepala madrasah"></div>
+        <div class="field"><label for="kepsek">Nama Kepala Madrasah</label><input id="kepsek" type="text" placeholder="Nama + gelar"></div>
+        <div class="field"><label for="nip-kepsek">NIP Kepala Madrasah</label><input id="nip-kepsek" type="text" placeholder="NIP kepala madrasah"></div>
       </div>
       <div class="grid2">
-        <div class="field last" style="grid-column:1/-1"><label>Satuan Pendidikan <span style="font-size:10px;color:var(--green);font-weight:600">⏱ Menentukan mapel, kelas & durasi JP</span></label>
+        <div class="field last" style="grid-column:1/-1"><label for="satuan">Satuan Pendidikan <span style="font-size:10px;color:var(--green);font-weight:600">⏱ Menentukan mapel, kelas & durasi JP</span></label>
           <select id="satuan" onchange="onSatuanChange()">
             <option value="MI" data-menit="35">Madrasah Ibtidaiyah (MI) — Kls I–VI · 35 menit/JP</option>
             <option value="MTs" data-menit="40">Madrasah Tsanawiyah (MTs) — Kls VII–IX · 40 menit/JP</option>
@@ -1603,12 +1605,12 @@
       </div>
       <div class="div"></div>
       <div class="grid3">
-        <div class="field"><label>Mata Pelajaran <span style="font-size:10px;color:var(--green);font-weight:600">📚 Sesuai satuan</span></label>
+        <div class="field"><label for="mapel">Mata Pelajaran <span style="font-size:10px;color:var(--green);font-weight:600">📚 Sesuai satuan</span></label>
           <select id="mapel" onchange="filterLintas()">
             <!-- diisi otomatis dari JS -->
           </select>
         </div>
-        <div class="field"><label>Kelas <span style="font-size:10px;color:var(--green);font-weight:600">🎓 Sesuai satuan</span></label>
+        <div class="field"><label for="kelas">Kelas <span style="font-size:10px;color:var(--green);font-weight:600">🎓 Sesuai satuan</span></label>
           <select id="kelas" onchange="updateFase()">
             <!-- diisi otomatis dari JS -->
           </select>
@@ -1618,8 +1620,8 @@
           <input id="fase" type="hidden" value="">
         </div>
       </div>
-      <div class="field"><label>Topik / Judul Modul <span style="color:#DC2626;font-weight:700">*</span></label><input id="topik" type="text" placeholder="Judul topik atau bab yang akan diajarkan"></div>
-      <div class="field last"><label>Tanggal Pengesahan <span style="font-size:10px;color:var(--green);font-weight:600">📅 Otomatis hari ini · bisa diubah</span></label>
+      <div class="field"><label for="topik">Topik / Judul Modul <span style="color:#DC2626;font-weight:700">*</span></label><input id="topik" type="text" placeholder="Judul topik atau bab yang akan diajarkan"></div>
+      <div class="field last"><label for="tanggal">Tanggal Pengesahan <span style="font-size:10px;color:var(--green);font-weight:600">📅 Otomatis hari ini · bisa diubah</span></label>
         <input id="tanggal" type="date">
       </div>
     </div>
@@ -1655,9 +1657,10 @@
     </div>
 
     <div class="card" id="sintaks-mode-card">
-      <div class="sec-label">🔄 Distribusi Sintaks Model Pembelajaran <span class="tag" style="background:var(--mam-danger-bg);color:var(--mam-danger)">* Wajib pilih</span>
-        <span class="tip" data-tip="Selesai per pertemuan: tiap pertemuan jalani siklus sintaks penuh — cocok materi pendek. Berlanjut: sintaks terbagi ke beberapa pertemuan, tiap pertemuan lanjutkan dari sebelumnya — cocok PjBL/PBL atau materi kompleks.">?</span>
-      </div>
+      <fieldset style="border:none;padding:0;margin:0">
+        <legend class="sec-label" style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;width:100%">🔄 Distribusi Sintaks Model Pembelajaran <span class="tag" style="background:var(--mam-danger-bg);color:var(--mam-danger)">* Wajib pilih</span>
+          <span class="tip" data-tip="Selesai per pertemuan: tiap pertemuan jalani siklus sintaks penuh — cocok materi pendek. Berlanjut: sintaks terbagi ke beberapa pertemuan, tiap pertemuan lanjutkan dari sebelumnya — cocok PjBL/PBL atau materi kompleks.">?</span>
+        </legend>
       <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.55">Bagaimana sintaks model dijalankan di seluruh pertemuan? Pilih sesuai kompleksitas materi dan ketersediaan waktu.</p>
       <div class="opt-stack">
         <label class="opt-card" onclick="selectSintaksMode('lengkap')" id="sintaks-lengkap">
@@ -1674,7 +1677,8 @@
             <div class="opt-card-desc">Sintaks didistribusikan ke seluruh pertemuan secara natural. Pertemuan berikutnya melanjutkan tahap sebelumnya (dengan recap di awal). Cocok untuk materi kompleks atau model PjBL/PBL.</div>
           </div>
         </label>
-      </div>
+        </div>
+      </fieldset>
     </div>
 
     <div class="btn-row"><div></div><button class="btn btn-primary" onclick="goStep(2)">Selanjutnya →</button></div>
@@ -1833,7 +1837,7 @@
               <label class="ms-option"><input type="checkbox" value="Tokoh adat" data-label="Tokoh adat" onchange="updateMSDisplay(this)"> <span>Tokoh adat</span></label>
               <label class="ms-option"><input type="checkbox" value="Guru tamu" data-label="Guru tamu" onchange="updateMSDisplay(this)"> <span>Guru tamu</span></label>
               <div class="ms-custom-wrap">
-                <input type="text" placeholder="Lainnya..." onkeypress="if(event.key==='Enter'){addMSCustom(this.nextElementSibling);event.preventDefault();}">
+                <input type="text" aria-label="Tambah kemitraan lainnya" placeholder="Lainnya..." onkeypress="if(event.key==='Enter'){addMSCustom(this.nextElementSibling);event.preventDefault();}">
                 <button onclick="addMSCustom(this);event.stopPropagation();">+ Tambah</button>
               </div>
             </div>
@@ -1852,7 +1856,7 @@
               <label class="ms-option"><input type="checkbox" value="Masyarakat sekitar" data-label="Masyarakat sekitar" onchange="updateMSDisplay(this)"> <span>Masyarakat sekitar</span></label>
               <label class="ms-option"><input type="checkbox" value="Alam terbuka" data-label="Alam terbuka" onchange="updateMSDisplay(this)"> <span>Alam terbuka</span></label>
               <div class="ms-custom-wrap">
-                <input type="text" placeholder="Lainnya..." onkeypress="if(event.key==='Enter'){addMSCustom(this.nextElementSibling);event.preventDefault();}">
+                <input type="text" aria-label="Tambah lingkungan lainnya" placeholder="Lainnya..." onkeypress="if(event.key==='Enter'){addMSCustom(this.nextElementSibling);event.preventDefault();}">
                 <button onclick="addMSCustom(this);event.stopPropagation();">+ Tambah</button>
               </div>
             </div>
@@ -1871,7 +1875,7 @@
               <label class="ms-option"><input type="checkbox" value="Presentasi / PPT" data-label="Presentasi / PPT" onchange="updateMSDisplay(this)"> <span>Presentasi / PPT</span></label>
               <label class="ms-option"><input type="checkbox" value="Gambar / infografis" data-label="Gambar / infografis" onchange="updateMSDisplay(this)"> <span>Gambar / infografis</span></label>
               <div class="ms-custom-wrap">
-                <input type="text" placeholder="Lainnya..." onkeypress="if(event.key==='Enter'){addMSCustom(this.nextElementSibling);event.preventDefault();}">
+                <input type="text" aria-label="Tambah media digital lainnya" placeholder="Lainnya..." onkeypress="if(event.key==='Enter'){addMSCustom(this.nextElementSibling);event.preventDefault();}">
                 <button onclick="addMSCustom(this);event.stopPropagation();">+ Tambah</button>
               </div>
             </div>
