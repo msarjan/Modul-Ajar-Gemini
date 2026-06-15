@@ -1,11 +1,11 @@
 // api/lynk-webhook.js
 // Vercel Serverless Function
-// Menerima webhook dari Lynk.id → generate kode GBD → insert Supabase → kirim email via Resend
+// Menerima webhook dari Lynk.id → generate kode GBD (sebanyak qty) → insert Supabase → kirim email
 
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
-// ── Mapping nama produk Lynk.id → jumlah kuota ───────────────
+// ── Mapping nama produk Lynk.id → jumlah kuota per unit ──────
 const PRODUK_KUOTA = {
   'Kuota x1 Modul' : 1,
   'Kuota x4 Modul' : 4,
@@ -28,6 +28,25 @@ function generateKode() {
   return result;
 }
 
+// Generate kode unik (cek ke Supabase, coba sampai 10x)
+async function generateKodeUnik() {
+  let attempts = 0;
+  while (attempts < 10) {
+    const kandidat = generateKode();
+    const { data: existing } = await supabase
+      .from('invite_codes')
+      .select('code')
+      .eq('code', kandidat)
+      .single();
+
+    if (!existing) {
+      return kandidat;
+    }
+    attempts++;
+  }
+  throw new Error('Gagal generate kode unik setelah 10 percobaan');
+}
+
 // Validasi signature Lynk.id
 function validasiSignature(body, signature, merchantKey) {
   const expected = crypto
@@ -37,8 +56,8 @@ function validasiSignature(body, signature, merchantKey) {
   return expected === signature;
 }
 
-// Kirim email via Gmail SMTP (Nodemailer)
-async function kirimEmail({ email, nama, kode, namaPaket, kuota }) {
+// Kirim email via Gmail SMTP (Nodemailer) — 1 kotak per kode
+async function kirimEmail({ email, nama, namaPaket, kuota, kodeList }) {
   const nodemailer = require('nodemailer');
 
   const transporter = nodemailer.createTransport({
@@ -49,6 +68,25 @@ async function kirimEmail({ email, nama, kode, namaPaket, kuota }) {
     },
   });
 
+  const kodeBoxes = kodeList.map(kode => `
+        <div style="
+          background: #FAF7F1;
+          border: 2px solid #0E6B53;
+          border-radius: 12px;
+          padding: 20px;
+          text-align: center;
+          margin: 16px 0;
+        ">
+          <p style="margin: 0 0 8px; font-size: 14px; color: #666;">Kode Aksesmu</p>
+          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #0E6B53;">${kode}</p>
+          <p style="margin: 8px 0 0; font-size: 14px; color: #666;">Kuota: ${kuota} modul</p>
+        </div>
+  `).join('');
+
+  const jumlahKodeText = kodeList.length > 1
+    ? `<p>Terima kasih sudah membeli <strong>${namaPaket}</strong> (${kodeList.length}x). Berikut ${kodeList.length} kode kuota kamu — masing-masing berisi ${kuota} modul:</p>`
+    : `<p>Terima kasih sudah membeli <strong>${namaPaket}</strong>. Berikut kode kuota kamu:</p>`;
+
   await transporter.sendMail({
     from: `"Modul Ajar Madrasah" <${process.env.GMAIL_USER}>`,
     to: email,
@@ -56,21 +94,9 @@ async function kirimEmail({ email, nama, kode, namaPaket, kuota }) {
     html: `
       <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; color: #141414;">
         <h2 style="color: #0E6B53;">Halo ${nama},</h2>
-        <p>Terima kasih sudah membeli <strong>${namaPaket}</strong>. Berikut kode kuota kamu:</p>
+        ${jumlahKodeText}
 
-        <div style="
-          background: #FAF7F1;
-          border: 2px solid #0E6B53;
-          border-radius: 12px;
-          padding: 20px;
-          text-align: center;
-          margin: 24px 0;
-        ">
-          <p style="margin: 0 0 8px; font-size: 14px; color: #666;">Kode Aksesmu</p>
-          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #0E6B53;">${kode}</p>
-        </div>
-
-        <p><strong>Kuota:</strong> ${kuota} modul</p>
+        ${kodeBoxes}
 
         <p><strong>Cara pakai:</strong></p>
         <ol style="line-height: 1.8;">
@@ -121,6 +147,7 @@ module.exports = async function handler(req, res) {
     const email     = customer?.email;
     const nama      = customer?.name || 'Guru';
     const namaPaket = items?.[0]?.title;
+    const qty       = items?.[0]?.qty || 1;
     const grandTotal = totals?.grandTotal;
 
     // Validasi field wajib
@@ -129,54 +156,39 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Payload tidak lengkap' });
     }
 
-    // Mapping produk → kuota
+    // Mapping produk → kuota per unit
     const kuota = PRODUK_KUOTA[namaPaket];
     if (!kuota) {
       console.error('Nama produk tidak dikenali:', namaPaket);
       return res.status(400).json({ error: `Produk tidak dikenali: ${namaPaket}` });
     }
 
-    // Generate kode unik (coba sampai dapat yang belum ada)
-    let kode;
-    let attempts = 0;
-    while (attempts < 10) {
-      const kandidat = generateKode();
-      const { data: existing } = await supabase
+    // Generate & insert kode sebanyak qty
+    const kodeList = [];
+    for (let i = 0; i < qty; i++) {
+      const kode = await generateKodeUnik();
+
+      const { error: insertError } = await supabase
         .from('invite_codes')
-        .select('code')
-        .eq('code', kandidat)
-        .single();
+        .insert({
+          code        : kode,
+          kuota_total : kuota,
+          kuota_sisa  : kuota,
+          Nama        : `${nama} - ${email} - refId:${refId}-${i + 1}/${qty}`,
+        });
 
-      if (!existing) {
-        kode = kandidat;
-        break;
+      if (insertError) {
+        throw new Error(`Supabase insert error (kode ${i + 1}/${qty}): ${insertError.message}`);
       }
-      attempts++;
+
+      kodeList.push(kode);
     }
 
-    if (!kode) {
-      throw new Error('Gagal generate kode unik setelah 10 percobaan');
-    }
+    // Kirim 1 email berisi semua kode
+    await kirimEmail({ email, nama, namaPaket, kuota, kodeList });
 
-    // Insert kode ke Supabase
-    const { error: insertError } = await supabase
-      .from('invite_codes')
-      .insert({
-        code        : kode,
-        kuota_total : kuota,
-        kuota_sisa  : kuota,
-        Nama        : `${nama} - ${email} - refId:${refId}`,
-      });
-
-    if (insertError) {
-      throw new Error(`Supabase insert error: ${insertError.message}`);
-    }
-
-    // Kirim email ke pembeli
-    await kirimEmail({ email, nama, kode, namaPaket, kuota });
-
-    console.log(`✅ Webhook OK | refId:${refId} | ${email} | ${namaPaket} | kode:${kode}`);
-    return res.status(200).json({ success: true, kode });
+    console.log(`✅ Webhook OK | refId:${refId} | ${email} | ${namaPaket} x${qty} | kode:${kodeList.join(', ')}`);
+    return res.status(200).json({ success: true, kodes: kodeList });
 
   } catch (err) {
     console.error('Webhook error:', err.message);
