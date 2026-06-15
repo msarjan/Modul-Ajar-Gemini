@@ -1,6 +1,7 @@
 // api/lynk-webhook.js
 // Vercel Serverless Function
-// Menerima webhook dari Lynk.id → generate kode GBD (sebanyak qty) → insert Supabase → kirim email
+// Menerima webhook dari Lynk.id → filter item kuota modul ajar (item lain diabaikan)
+// → generate kode GBD sesuai qty per item → insert Supabase → kirim 1 email berisi semua kode
 
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
@@ -57,7 +58,8 @@ function validasiSignature(body, signature, merchantKey) {
 }
 
 // Kirim email via Gmail SMTP (Nodemailer) — 1 kotak per kode
-async function kirimEmail({ email, nama, namaPaket, kuota, kodeList }) {
+// kodeList: [{ kode: 'GBD-XXXXXX', kuota: 4 }, ...]
+async function kirimEmail({ email, nama, kodeList }) {
   const nodemailer = require('nodemailer');
 
   const transporter = nodemailer.createTransport({
@@ -68,7 +70,7 @@ async function kirimEmail({ email, nama, namaPaket, kuota, kodeList }) {
     },
   });
 
-  const kodeBoxes = kodeList.map(kode => `
+  const kodeBoxes = kodeList.map(({ kode, kuota }) => `
         <div style="
           background: #FAF7F1;
           border: 2px solid #0E6B53;
@@ -84,8 +86,8 @@ async function kirimEmail({ email, nama, namaPaket, kuota, kodeList }) {
   `).join('');
 
   const jumlahKodeText = kodeList.length > 1
-    ? `<p>Terima kasih sudah membeli <strong>${namaPaket}</strong> (${kodeList.length}x). Berikut ${kodeList.length} kode kuota kamu — masing-masing berisi ${kuota} modul:</p>`
-    : `<p>Terima kasih sudah membeli <strong>${namaPaket}</strong>. Berikut kode kuota kamu:</p>`;
+    ? `<p>Terima kasih atas pembelianmu. Berikut ${kodeList.length} kode kuota kamu:</p>`
+    : `<p>Terima kasih atas pembelianmu. Berikut kode kuota kamu:</p>`;
 
   await transporter.sendMail({
     from: `"Modul Ajar Madrasah" <${process.env.GMAIL_USER}>`,
@@ -143,52 +145,61 @@ module.exports = async function handler(req, res) {
 
     // Ekstrak data dari payload Lynk.id
     const messageData = req.body?.data?.message_data;
-    const { customer, items, totals, refId } = messageData;
-    const email     = customer?.email;
-    const nama      = customer?.name || 'Guru';
-    const namaPaket = items?.[0]?.title;
-    const qty       = items?.[0]?.qty || 1;
-    const grandTotal = totals?.grandTotal;
+    const { customer, items, refId } = messageData;
+    const email = customer?.email;
+    const nama  = customer?.name || 'Guru';
 
     // Validasi field wajib
-    if (!email || !namaPaket) {
-      console.error('Payload tidak lengkap:', { email, namaPaket });
+    if (!email || !items || items.length === 0) {
+      console.error('Payload tidak lengkap:', { email, items });
       return res.status(400).json({ error: 'Payload tidak lengkap' });
     }
 
-    // Mapping produk → kuota per unit
-    const kuota = PRODUK_KUOTA[namaPaket];
-    if (!kuota) {
-      console.error('Nama produk tidak dikenali:', namaPaket);
-      return res.status(400).json({ error: `Produk tidak dikenali: ${namaPaket}` });
+    // Filter hanya item yang merupakan produk kuota modul ajar.
+    // Item lain (produk lain di toko Lynk.id Pak Sarjan) diabaikan diam-diam.
+    const itemKuota = items
+      .filter(item => PRODUK_KUOTA[item.title])
+      .map(item => ({
+        title : item.title,
+        qty   : item.qty || 1,
+        kuota : PRODUK_KUOTA[item.title],
+      }));
+
+    // Tidak ada item kuota modul ajar → bukan urusan webhook ini
+    if (itemKuota.length === 0) {
+      console.log(`Transaksi tidak terkait kuota modul ajar | refId:${refId}`);
+      return res.status(200).json({ success: true, info: 'Tidak ada item kuota modul ajar' });
     }
 
-    // Generate & insert kode sebanyak qty
-    const kodeList = [];
-    for (let i = 0; i < qty; i++) {
-      const kode = await generateKodeUnik();
+    // Generate & insert kode untuk setiap item kuota sesuai qty
+    const kodeList = []; // [{ kode, kuota }]
+    for (const item of itemKuota) {
+      for (let i = 0; i < item.qty; i++) {
+        const kode = await generateKodeUnik();
 
-      const { error: insertError } = await supabase
-        .from('invite_codes')
-        .insert({
-          code        : kode,
-          kuota_total : kuota,
-          kuota_sisa  : kuota,
-          Nama        : `${nama} - ${email} - refId:${refId}-${i + 1}/${qty}`,
-        });
+        const { error: insertError } = await supabase
+          .from('invite_codes')
+          .insert({
+            code        : kode,
+            kuota_total : item.kuota,
+            kuota_sisa  : item.kuota,
+            Nama        : `${nama} - ${email} - refId:${refId} - ${item.title} ${i + 1}/${item.qty}`,
+          });
 
-      if (insertError) {
-        throw new Error(`Supabase insert error (kode ${i + 1}/${qty}): ${insertError.message}`);
+        if (insertError) {
+          throw new Error(`Supabase insert error (${item.title} ${i + 1}/${item.qty}): ${insertError.message}`);
+        }
+
+        kodeList.push({ kode, kuota: item.kuota });
       }
-
-      kodeList.push(kode);
     }
 
     // Kirim 1 email berisi semua kode
-    await kirimEmail({ email, nama, namaPaket, kuota, kodeList });
+    await kirimEmail({ email, nama, kodeList });
 
-    console.log(`✅ Webhook OK | refId:${refId} | ${email} | ${namaPaket} x${qty} | kode:${kodeList.join(', ')}`);
-    return res.status(200).json({ success: true, kodes: kodeList });
+    const ringkasan = itemKuota.map(it => `${it.title} x${it.qty}`).join(', ');
+    console.log(`✅ Webhook OK | refId:${refId} | ${email} | ${ringkasan} | kode:${kodeList.map(k => k.kode).join(', ')}`);
+    return res.status(200).json({ success: true, kodes: kodeList.map(k => k.kode) });
 
   } catch (err) {
     console.error('Webhook error:', err.message);
