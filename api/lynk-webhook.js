@@ -102,7 +102,7 @@ async function kirimEmail({ email, nama, kodeList }) {
 
         <p><strong>Cara pakai:</strong></p>
         <ol style="line-height: 1.8;">
-          <li>Buka <a href="https://modul-ajar-madrasah.vercel.app" style="color: #0E6B53;">modul-ajar-madrasah.vercel.app</a></li>
+          <li>Buka <a href="https://modulin.vercel.app" style="color: #0E6B53;">modulin.vercel.app</a></li>
           <li>Masukkan kode di kolom <strong>"Kode Akses"</strong></li>
           <li>Mulai generate modul ajar! 🚀</li>
         </ol>
@@ -114,7 +114,7 @@ async function kirimEmail({ email, nama, kodeList }) {
 
         <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
         <p style="font-size: 12px; color: #999; text-align: center;">
-          Tim Modul Ajar Madrasah · Generator modul ajar berbasis AI untuk guru madrasah Indonesia
+          Tim Modul Ajar Madrasah · Aplikasi modul ajar berbasis AI untuk guru madrasah Indonesia
         </p>
       </div>
     `,
