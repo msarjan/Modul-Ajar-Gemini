@@ -379,7 +379,7 @@
   #invite-overlay::before{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.07 0 0 0 0 0.07 0 0 0 0 0.07 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.42'/></svg>");opacity:0.5;mix-blend-mode:multiply;pointer-events:none;z-index:0}
   #invite-overlay .stage{flex:1}
 
-   #invite-overlay .stage{ position: relative; height: 100vh; width: 100vw; }
+   #invite-overlay .stage{ position: relative; height: 100vh; height: 100dvh; width: 100vw; }
    #invite-overlay .page{
     position: absolute; inset: 0;
     display: flex; flex-direction: column;
@@ -1141,18 +1141,21 @@
      #invite-overlay .p1-visual{ display: none; }
      #invite-overlay .p1-body{ grid-template-columns: 1fr; }
   }
-  /* Safety: on shorter viewports, let the page scroll and scale the (tall-screen)
-     type down so nothing overlaps or clips. */
-  #invite-overlay .page{ overflow-y: auto; }
+  /* Tombol "Lanjut" selalu terlihat: header & footer onboarding terpaku di
+     tempat, hanya isi (body) yang scroll bila layar terlalu pendek. Pengganti
+     pengaman lama yang justru mendorong tombol Lanjut ke bawah fold di laptop
+     berlayar pendek (mayoritas laptop guru). */
+  #invite-overlay .page{ overflow: hidden; }               /* halaman tak pernah scroll sendiri */
+  #invite-overlay .top-bar,
+  #invite-overlay .bottom-rail{ flex: 0 0 auto; }          /* header & footer terpaku, tak ikut menyusut */
   @media (max-height: 860px){
     #invite-overlay .page{ padding-top: 18px; padding-bottom: 18px; }
     #invite-overlay .p1-body,
     #invite-overlay .p2-body,
     #invite-overlay .p3-body{
-      flex: 0 0 auto;
       align-items: start;
       justify-content: flex-start;
-      overflow: visible;
+      overflow-y: auto;                                    /* hanya isi yang scroll, footer tetap di dasar */
     }
     #invite-overlay .p2-body{ padding-top: 4px; }
     #invite-overlay .p1-headline{ font-size: clamp(28px, 3.4vw, 50px); }
