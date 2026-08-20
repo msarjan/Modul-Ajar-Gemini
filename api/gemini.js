@@ -1,7 +1,7 @@
 // Vercel Serverless Function — proxy aman ke Gemini API via OpenRouter
 // API key disimpan di environment variable Vercel, tidak pernah terekspos ke browser
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-const MODEL              = 'google/gemini-3.5-flash';
+const MODEL              = 'google/gemini-3.7-flash';
 const MAX_TOKENS         = 65536;
 
 const setCors = (res) => {
