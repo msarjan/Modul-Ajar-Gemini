@@ -3279,6 +3279,7 @@ function buildPrompt(){
     ? `MODE: SELESAI PER PERTEMUAN
 - Setiap pertemuan WAJIB menjalankan SIKLUS LENGKAP sintaks model ${getSelectedModels()||'CTL'} dari awal sampai akhir
 - Tidak ada "lanjutan" antar pertemuan — tiap pertemuan adalah unit yang berdiri sendiri
+- Pertemuan 2 dan seterusnya: bagian "Apersepsi Bermakna" tetap WAJIB dibuka dengan RECAP singkat pertemuan sebelumnya lalu dikaitkan ke fokus hari ini — meskipun siklus sintaksnya berdiri sendiri
 - Refleksi murid LENGKAP di tiap akhir pertemuan (4 pertanyaan sesuai format standar)`
     : `MODE: BERLANJUT ANTAR PERTEMUAN
 - DISTRIBUSIKAN tahapan sintaks model ${getSelectedModels()||'CTL'} ke SELURUH ${n} pertemuan secara natural dan logis
@@ -3363,6 +3364,8 @@ TITIK 1 — KEGIATAN AWAL (bagian "Insersi KBC"):
 Gunakan ayat, hadis, atau refleksi singkat yang LANGSUNG terhubung dengan topik pelajaran hari itu.
 Contoh baik: "Guru menampilkan QS. Ar-Rum: 41 lalu bertanya: 'Menurut kalian, apa hubungan ayat ini dengan materi daur air yang akan kita pelajari hari ini?'"
 Jangan hanya tulis: "Guru menyampaikan nilai Cinta Lingkungan."
+🔴 WAJIB SEBUT SUMBER SECARA KONKRET: setiap rujukan Al-Qur'an WAJIB menyebut nama surat + nomor ayat (mis. QS. Ar-Rum: 41), dan setiap rujukan hadis WAJIB menyebut perawinya (mis. HR. Bukhari). DILARANG menulis rujukan samar tanpa identitas sumber — contoh yang DILARANG: "firman Allah tentang larangan berbuat zalim", "hadis tentang amal jariyah", "ayat tentang menuntut ilmu".
+Jika guru sudah mengisi "Ayat/Hadis yang diminta" di data input, WAJIB jadikan itu rujukan utama. Jika diisi "-", pilih sendiri rujukan yang relevan dengan topik — tetap dengan identitas sumber yang lengkap.
 
 TITIK 2 — KEGIATAN INTI (terintegrasi dalam 1 tahap sintaks):
 Satu tahap dalam sintaks model pembelajaran WAJIB mengandung dimensi KBC.
@@ -3492,6 +3495,7 @@ Catatan: insersi yang lebih detail (ayat, hadis, percakapan) akan muncul di tiap
 2. WAJIB IKUTI SINTAKS MODEL "${getSelectedModels()||'CTL'}" DENGAN BENAR di setiap Kegiatan Inti
 3. Setiap tahap sintaks = 1 bullet utama dengan sub-bullets detail aktivitas
 4. Bahasa singkat, konkret, ada arahan praktis untuk guru
+5. Alokasi menit harus REALISTIS — seluruh butir Kegiatan Awal dan Penutup wajib muat dalam menit yang tersedia. Jika alokasinya pendek (≤10 menit), tulis tiap butir SANGAT singkat (1 kalimat, aktivitas ringkas), jangan aktivitas panjang yang tidak mungkin selesai
 ${['Matematika','Fisika'].includes(document.getElementById('mapel').value) ? `
 🔢 ATURAN KHUSUS MAPEL ${document.getElementById('mapel').value.toUpperCase()} (WAJIB DIPATUHI):
 - Setiap kali ada konsep yang melibatkan rumus, WAJIB tuliskan rumusnya secara eksplisit di dalam narasi aktivitas
@@ -3510,8 +3514,9 @@ Format per pertemuan:
 - **Pembuka:** [salam, doa bersama, dan sapaan hangat — 1 kalimat, variasikan tiap pertemuan]
 - **Membangun Kesadaran:** [aktivitas singkat menyiapkan fokus dan kesiapan belajar murid]
 - **Pilar Niat:** [niat yang ditanamkan, singkat]
+- **Tujuan Hari Ini:** [guru menyampaikan sasaran belajar pertemuan ini kepada murid dengan bahasa sederhana — 1 kalimat, ambil dari TP yang relevan]
 - **Apersepsi Bermakna:** [aktivitas pengantar]
-- **Insersi KBC:** [ayat/nilai Islam yang ditanamkan + cara guru menyampaikan, 1–2 kalimat]
+- **Insersi KBC:** [nilai Islam yang ditanamkan + cara guru menyampaikan, 1–2 kalimat — WAJIB sebut sumber konkret: nama surat + nomor ayat, atau hadis + perawinya]
 - **Pertanyaan Pemantik:** "[pertanyaan menarik]"
 
 **Kegiatan Inti ([menit] menit) — Mengaplikasi (Bermakna & Menggembirakan) — Sintaks ${getSelectedModels()||'CTL'}:**
@@ -3524,8 +3529,9 @@ Format per pertemuan:
 - **[Tahap dst sesuai jumlah sintaks model yang dipilih]**
 
 **Kegiatan Penutup ([menit] menit) — Merefleksi (Berkesadaran & Bermakna):**
-- **Refleksi Materi:** [aktivitas]
+- **Kesimpulan Bersama:** [murid merumuskan kesimpulan pembelajaran hari ini, lalu guru memberi penguatan — 1 kalimat]
 - **Refleksi Emosi:** [aktivitas]
+- **Tindak Lanjut:** [pesan singkat apa yang perlu disiapkan murid untuk pertemuan berikutnya. Khusus pertemuan TERAKHIR: ganti dengan apresiasi guru atas selesainya seluruh rangkaian pembelajaran]
 - **Syukur:** [doa penutup singkat]
 
 ## I. ASESMEN PEMBELAJARAN
