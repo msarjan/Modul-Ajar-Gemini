@@ -3496,6 +3496,10 @@ Catatan: insersi yang lebih detail (ayat, hadis, percakapan) akan muncul di tiap
 3. Setiap tahap sintaks = 1 bullet utama dengan sub-bullets detail aktivitas
 4. Bahasa singkat, konkret, ada arahan praktis untuk guru
 5. Alokasi menit harus REALISTIS — seluruh butir Kegiatan Awal dan Penutup wajib muat dalam menit yang tersedia. Jika alokasinya pendek (≤10 menit), tulis tiap butir SANGAT singkat (1 kalimat, aktivitas ringkas), jangan aktivitas panjang yang tidak mungkin selesai
+6. SUBJEK KALIMAT — murid sebagai pelaku utama:
+   - Aktivitas BELAJAR ditulis dengan MURID sebagai subjek: "Murid mengamati…", "Murid berdiskusi…", "Murid menyusun…". JANGAN tulis "Guru meminta murid mengamati…" untuk aktivitas belajar.
+   - Peran GURU tetap ditulis dengan guru sebagai subjek, khusus untuk: memfasilitasi, menayangkan/menyajikan media, menjelaskan konsep, membimbing, memberi penguatan, dan menilai. Contoh: "Guru menayangkan video…", "Guru memberi penguatan…", "Guru mengamati kerja kelompok…"
+   - JANGAN hilangkan peran guru — modul ini dipakai guru sebagai panduan mengajar. Yang diubah adalah siapa pelaku aktivitas belajarnya, bukan menghapus guru dari modul.
 ${['Matematika','Fisika'].includes(document.getElementById('mapel').value) ? `
 🔢 ATURAN KHUSUS MAPEL ${document.getElementById('mapel').value.toUpperCase()} (WAJIB DIPATUHI):
 - Setiap kali ada konsep yang melibatkan rumus, WAJIB tuliskan rumusnya secara eksplisit di dalam narasi aktivitas
@@ -3504,6 +3508,13 @@ ${['Matematika','Fisika'].includes(document.getElementById('mapel').value) ? `
 - DILARANG hanya menyebut nama rumus tanpa menuliskan rumusnya
 - Contoh BENAR: "Guru menjelaskan: titik A(x, y) direfleksikan terhadap sumbu x menghasilkan A'(x, -y)"
 - Contoh SALAH: "Guru menjelaskan konsep refleksi terhadap sumbu x" (tanpa rumus eksplisit)
+` : ''}${asesmen.includes('Diagnostik') ? `
+🔍 ASESMEN AWAL & PENGELOMPOKAN MURID (guru memilih Asesmen Diagnostik — WAJIB DIPATUHI):
+- Di PERTEMUAN 1 SAJA, butir "Pertanyaan Pemantik" berfungsi ganda sebagai ASESMEN AWAL. Tulis 2–3 pertanyaan lisan konkret, lalu tutup dengan 1 kalimat kriteria kesiapan yang sederhana dan bisa langsung dipakai guru — contoh: "Murid yang mampu menjawab minimal 2 pertanyaan dikelompokkan sebagai sudah siap."
+- Di tahap PERTAMA sintaks pada Kegiatan Inti PERTEMUAN 1, WAJIB ada langkah pembentukan kelompok yang MEMAKAI hasil asesmen awal tersebut: murid yang sudah siap dan yang belum siap dicampur dalam satu kelompok, murid yang sudah siap berperan sebagai tutor sebaya.
+- Langkah pendampingan guru disesuaikan dengan Pengetahuan Awal dan Kebutuhan Belajar murid yang tercantum di bagian B.
+- JANGAN menambah butir baru di Kegiatan Awal — cukup perluas butir "Pertanyaan Pemantik" di pertemuan 1.
+- Pertemuan 2 dan seterusnya TIDAK perlu mengulang asesmen awal.
 ` : ''}
 
 Format per pertemuan:
